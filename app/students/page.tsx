@@ -32,10 +32,10 @@ export default async function Students() {
                 <div className='w-full content px-8 py-7'>
 
                     <div className='page-header flex items-center justify-between'>
-                        <div className='font-semibold text-xl'>Folios</div>
+                        <div className='font-semibold text-xl'>Students</div>
                         <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
                             <AddOutlinedIcon className='mr-1.5'/>
-                            New Folio
+                            New Student
                         </button>
                     </div>
 
