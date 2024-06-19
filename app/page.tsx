@@ -1,4 +1,4 @@
-import DeployButton from "../components/DeployButton";
+/* import DeployButton from "../components/DeployButton";
 import AuthButton from "../components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
@@ -51,4 +51,43 @@ export default async function Index() {
       </footer>
     </div>
   );
+}
+ */
+
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+
+import Sidebar from './uiComponents/sidebar'
+import UtilityBar from './uiComponents/utilityBar'
+
+export default async function Home() {
+
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/login");
+  }
+
+  return (
+      <main className='w-full'>
+          <Sidebar/>
+          <div className='page-container w-full min-h-screen pl-52'>
+      
+              <UtilityBar/>
+
+              <div className='w-full content px-8 py-7'>
+
+                  <div className='page-header flex items-center justify-between'>
+                      <div className='font-semibold text-xl'>Home</div>
+                  </div>
+
+              </div>
+              
+          </div>
+      </main>
+    )
 }

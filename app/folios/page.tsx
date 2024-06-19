@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { redirect } from "next/navigation";
 
 import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
@@ -8,8 +9,18 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { Client, columns } from './columns';
 import { DataTable } from './data-table';
 
+
 export default async function Folios() {
     const supabase = createClient()
+
+    const {
+        data: { user },
+      } = await supabase.auth.getUser();
+    
+      if (!user) {
+        return redirect("/login");
+    }
+
     const { data: students } = await supabase.from('folio_details_view').select()
 
     return (

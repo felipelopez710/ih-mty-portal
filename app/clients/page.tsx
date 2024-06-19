@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { redirect } from "next/navigation";
 
 import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
@@ -10,6 +11,15 @@ import { DataTable } from './data-table';
 
 export default async function Clients() {
     const supabase = createClient()
+
+    const {
+        data: { user },
+      } = await supabase.auth.getUser();
+    
+      if (!user) {
+        return redirect("/login");
+    }
+    
     const { data: clients } = await supabase.from('clients').select()
 
     return (
