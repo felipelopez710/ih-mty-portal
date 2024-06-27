@@ -1,13 +1,15 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation";
 
+import TeachersTable from './teachers-table'
+
 import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-import { Client, columns } from './columns';
-import { DataTable } from './data-table';
+/* import { Client, columns } from './columns';
+import { DataTable } from './data-table'; */
 
 export default async function Teachers() {
     const supabase = createClient()
@@ -20,7 +22,8 @@ export default async function Teachers() {
         return redirect("/login");
     }
 
-    const { data: clients } = await supabase.from('teachers').select()
+    const { data: teachers } = await supabase.from('teachers').select()
+    console.log(teachers)
 
     return (
         <main className='w-full'>
@@ -42,7 +45,8 @@ export default async function Teachers() {
                 </div>
 
                 <div className='px-7 wfull' style={{ height: 'auto', width: '100%' }}>
-                    <DataTable columns={columns} data={clients}/>
+                    {/* <DataTable columns={columns} data={clients}/> */}
+                    <TeachersTable rows={teachers} />
                 </div>
                 
             </div>

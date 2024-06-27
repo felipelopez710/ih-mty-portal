@@ -1,14 +1,15 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation";
 
+import FoliosTable from "./folios-table"
+
 import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-import { Client, columns } from './columns';
-import { DataTable } from './data-table';
-
+/* import { Client, columns } from './columns';
+import { DataTable } from './data-table'; */
 
 export default async function Folios() {
     const supabase = createClient()
@@ -21,7 +22,8 @@ export default async function Folios() {
         return redirect("/login");
     }
 
-    const { data: students } = await supabase.from('folio_details_view').select()
+    const { data: folios } = await supabase.from('folio_details_view').select()
+    console.log(folios)
 
     return (
         <main className='w-full'>
@@ -41,7 +43,8 @@ export default async function Folios() {
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>
-                        <DataTable columns={columns} data={students}/>
+                        {/* <DataTable columns={columns} data={students}/> */}
+                        <FoliosTable rows={folios} />
                     </div>
 
                 </div>
