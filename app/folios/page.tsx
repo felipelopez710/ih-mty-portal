@@ -8,9 +8,6 @@ import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-/* import { Client, columns } from './columns';
-import { DataTable } from './data-table'; */
-
 export default async function Folios() {
     const supabase = createClient()
 
@@ -23,7 +20,6 @@ export default async function Folios() {
     }
 
     const { data: folios } = await supabase.from('folio_details_view').select()
-    console.log(folios)
 
     return (
         <main className='w-full'>
@@ -43,7 +39,6 @@ export default async function Folios() {
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>
-                        {/* <DataTable columns={columns} data={students}/> */}
                         <FoliosTable rows={folios} />
                     </div>
 

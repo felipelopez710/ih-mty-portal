@@ -8,9 +8,6 @@ import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-/* import { Client, columns } from './columns';
-import { DataTable } from './data-table'; */
-
 export default async function Teachers() {
     const supabase = createClient()
 
@@ -23,7 +20,6 @@ export default async function Teachers() {
     }
 
     const { data: teachers } = await supabase.from('teachers').select()
-    console.log(teachers)
 
     return (
         <main className='w-full'>
@@ -45,7 +41,6 @@ export default async function Teachers() {
                 </div>
 
                 <div className='px-7 wfull' style={{ height: 'auto', width: '100%' }}>
-                    {/* <DataTable columns={columns} data={clients}/> */}
                     <TeachersTable rows={teachers} />
                 </div>
                 
