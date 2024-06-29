@@ -7,6 +7,7 @@ import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import Link from 'next/link.js';
 
 export default async function Clients() {
     const supabase = createClient()
@@ -32,10 +33,12 @@ export default async function Clients() {
 
                     <div className='page-header flex items-center justify-between'>
                         <div className='font-semibold text-xl'>Clients</div>
-                        <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
-                            <AddOutlinedIcon className='mr-1.5'/>
-                            New Client
-                        </button>
+                        <Link href="/clients/new">
+                            <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
+                                <AddOutlinedIcon className='mr-1.5'/>
+                                New Client
+                            </button>
+                        </Link>
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>
