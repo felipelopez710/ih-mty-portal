@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link';
 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined';
 import GroupWorkOutlinedIcon from '@mui/icons-material/GroupWorkOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
@@ -20,9 +21,14 @@ const menuItems = [
     slug: '/home'
   },
   {
-    icon: GroupWorkOutlinedIcon,
+    icon: ClassOutlinedIcon,
     label: 'Folios',
     slug: '/folios'
+  },
+  {
+    icon: GroupWorkOutlinedIcon,
+    label: 'Groups',
+    slug: '/groups'
   },
   {
     icon: GroupsOutlinedIcon,
@@ -70,7 +76,7 @@ export default function Sidebar() {
                 const Icon = item.icon
                 return (
                     <Link href={item.slug}>
-                      <div className={`px-2 py-1.5 rounded-lg flex items-center ${pathname == item.slug ? 'bg-slate-100 font-semibold' : ''}`}>
+                      <div className={`px-2 py-1.5 rounded-lg flex items-center ${pathname.includes(item.slug) ? 'bg-slate-100 font-semibold' : ''}`}>
                       <Icon sx={{ fontSize: 20 }} />
                       <div className='pl-2'> {item.label} </div>
                       </div>
