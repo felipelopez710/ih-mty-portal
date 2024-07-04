@@ -127,8 +127,8 @@ export default function NewClient() {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                             {/* Form header and submit button */}
-                             <div className='header-container flex justify-between items-center mb-6 w-full'>
+                            {/* Form header and submit button */}
+                            <div className='header-container flex justify-between items-center mb-6 w-full'>
                                 <div className='text-xl font-semibold flex items-center'>
                                     <ArrowBackRoundedIcon className='mr-2'/>
                                     New Client 

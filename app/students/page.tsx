@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from "next/navigation";
+import Link from 'next/link';
 
 import StudentsTable from "./students-table"
 
@@ -32,10 +33,12 @@ export default async function Students() {
 
                     <div className='page-header flex items-center justify-between'>
                         <div className='font-semibold text-xl'>Students</div>
-                        <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
-                            <AddOutlinedIcon className='mr-1.5'/>
-                            New Student
-                        </button>
+                        <Link href="/students/new">
+                            <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
+                                <AddOutlinedIcon className='mr-1.5'/>
+                                New Student
+                            </button>
+                        </Link>
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>

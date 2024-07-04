@@ -206,7 +206,7 @@ export default function NewTeacher() {
                                                                     <Select onValueChange={field.onChange}>
                                                                         <FormControl>
                                                                             <SelectTrigger>
-                                                                                <SelectValue placeholder="Select your gender"/>
+                                                                                <SelectValue placeholder="Select the gender"/>
                                                                             </SelectTrigger>
                                                                         </FormControl>
                                                                         <SelectContent className='bg-white'>
@@ -297,7 +297,7 @@ export default function NewTeacher() {
                                                                     <Select onValueChange={field.onChange}>
                                                                         <FormControl>
                                                                             <SelectTrigger>
-                                                                                <SelectValue placeholder="Select your gender"/>
+                                                                                <SelectValue placeholder="Select nationality"/>
                                                                             </SelectTrigger>
                                                                         </FormControl>
                                                                         <SelectContent className='bg-white'>
