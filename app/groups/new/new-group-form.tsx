@@ -95,8 +95,6 @@ export default function NewGroupForm() {
     const [studentsList, setStudentsList] = useState<any>()
     const [activeClient, setActiveClient] = useState(null)
 
-    let availableStudents
-
     const handleSubmit = (e : any) => {
         e.preventDefault()
         console.log(studentsList)
