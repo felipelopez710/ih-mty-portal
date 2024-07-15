@@ -174,6 +174,7 @@ export default function NewGroupForm() {
                         <div className='fields-container flex gap-5'>
 
                             <Autocomplete
+                                multiple
                                 className='flex-1'
                                 disablePortal
                                 id="students"
