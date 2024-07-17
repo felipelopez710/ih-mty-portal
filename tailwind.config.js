@@ -11,7 +11,10 @@ module.exports = {
         foreground: "hsl(var(--foreground))",
         'ih-blue': '#003A78',
         'ih-overlay-blue': '#295A8E',
+        'light-white': '#CCD8E4',
         'neutral-20': '#D2D2D2',
+        'ih-background': '#F8FAFC',
+        'light-blue': '#E0E7EF',
         btn: {
           background: "hsl(var(--btn-background))",
           "background-hover": "hsl(var(--btn-background-hover))",

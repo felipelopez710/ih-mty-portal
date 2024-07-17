@@ -18,7 +18,7 @@
 
 body {
   color: #000;
-  background: #F0F0F1 !important;
+  background: #F8FAFC !important;
   font-size: 14px;
 }
 
@@ -26,4 +26,16 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.ih-button {
+  background-color: #003A78;
+}
+
+.ih-button:hover {
+  background-color: #012a56 !important;
+}
+
+.ant-spin-dot-item {
+  background-color: rgb(255, 255, 255) !important;
 }
