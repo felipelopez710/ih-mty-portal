@@ -1,21 +1,27 @@
 import Sidebar from '@/app/uiComponents/sidebar';
 import UtilityBar from '@/app/uiComponents/utilityBar';
-import DetailForm from './detail-form';
+import RegistrationForm from './client-form';
 
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import Link from 'next/link.js';
-
-export default function ClientDetail(){
+export default function RegisterClient() {
     return(
         <main className='w-full'>
+
             <Sidebar/>
+
             <div className='page-container w-full min-h-screen pl-52'>
+
                 <UtilityBar/>
 
-                <div className='w-full content px-8 py-7'>
-                    <DetailForm/>
+                <div className='w-full flex justify-center content px-8 py-7'>
+                    <div className='content-container w-full max-w-5xl'>
+
+                        <RegistrationForm/>
+
+                    </div>
                 </div>
+
             </div>
+
         </main>
     )
 }

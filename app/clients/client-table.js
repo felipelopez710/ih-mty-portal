@@ -1,6 +1,7 @@
 'use client'
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridEventListener } from '@mui/x-data-grid';
+import { useRouter } from 'next/navigation'
 
 const columns = [
     { 
@@ -48,6 +49,13 @@ const columns = [
 
 export default function ClientTable({rows}) {
 
+    const router = useRouter();
+
+    const handleRowClick = (params) => {
+        console.log(`Row clicked ID: "${params.row.client_id}"`);
+        router.push(`clients/${params.row.client_id}`)
+    };
+
     return(
         <div>
             <DataGrid
@@ -64,7 +72,9 @@ export default function ClientTable({rows}) {
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.client_id}
+                onRowClick={handleRowClick}
                 className='bg-white'
+                isCellEditable={() => false}
             />
         </div>
     )
