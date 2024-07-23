@@ -1,6 +1,7 @@
 'use client'
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useRouter } from 'next/navigation'
 
 const columns = [
     { 
@@ -47,6 +48,13 @@ const columns = [
 ];
 
 export default function TeachersTable({rows}) {
+    const router = useRouter();
+
+    const handleRowClick = (params) => {
+        console.log(`Row clicked ID: "${params.row.teacher_id}"`);
+        router.push(`teachers/${params.row.teacher_id}`)
+    };
+
     return(
         <div>
             <DataGrid
@@ -63,7 +71,9 @@ export default function TeachersTable({rows}) {
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.teacher_id}
+                onRowClick={handleRowClick}
                 className='bg-white'
+                isCellEditable={() => false}
             />
         </div>
     )
