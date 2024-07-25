@@ -1,6 +1,7 @@
 'use client'
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useRouter } from 'next/navigation'
 
 const columns = [
     { 
@@ -41,6 +42,14 @@ const columns = [
 ];
 
 export default function FoliosTable({rows}){
+
+    const router = useRouter();
+
+    const handleRowClick = (params) => {
+        console.log(`Row clicked ID: "${params.row.folio_id}"`);
+        router.push(`folios/${params.row.folio_id}`)
+    };
+
     return(
         <div>
             <DataGrid
@@ -57,7 +66,9 @@ export default function FoliosTable({rows}){
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.folio_id}
+                onRowClick={handleRowClick}
                 className='bg-white'
+                isCellEditable={() => false}
             />
         </div>
     )
