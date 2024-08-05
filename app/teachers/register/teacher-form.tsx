@@ -1,5 +1,7 @@
 'use client'
 
+import { jsClient } from '@/utils/supabase/form-server';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { Form, Button, Input, Select, DatePicker, Spin } from "antd";
@@ -11,10 +13,13 @@ type FieldType = {
     surname?: string;
     gender?: string;
     code_ih?: string;
+    date_of_birth?: Date;
     nationality?: string;
     native_language?: string;
     rfc?: string;
     curp?: string;
+    join_date?: Date;
+    quit_date?: Date;
     email?: string;
     mobile?: string,
     phone_number?: string;
@@ -30,17 +35,47 @@ type FieldType = {
 const { TextArea } = Input;
 
 export default function TeacherForm(){
+    const supabase = jsClient
 
     const router = useRouter();
 
     const [loading, setLoading] = useState(false)
 
-    const onFinish = (e:FieldType) => {
+    async function onFinish(e:FieldType) {
         setLoading(true)
-        console.log('Success:', e);
+        console.log('Sent data:', e);
+
+        const { data, error } = await supabase
+        .from('teachers')
+        .insert({
+            full_name: `${e.name} ${e.surname}`,
+            name: e.name,
+            surname: e.surname,
+            gender: e.gender,
+            code_ih: e.code_ih,
+            date_of_birth: e.date_of_birth,
+            nationality: e.nationality,
+            native_language: e.native_language,
+            rfc: e.rfc,
+            curp: e.curp,
+            join_date: e.join_date,
+            quit_date: e.quit_date,
+            email: e.email,
+            mobile: e.mobile,
+            phone_number: e.phone_number,
+            phone_number_2: e.phone_number_2,
+            address: e.address,
+            neighborhood: e.neighborhood,
+            city: e.city,
+            state: e.state,
+            zip_code: e.zip_code,
+            comments: e.comments,
+        })
+        .select()
+
         setTimeout(() => {
             router.push('/teachers')
-        }, 2500);
+        }, 1000);
     };
 
     return(
@@ -108,7 +143,7 @@ export default function TeacherForm(){
                                 {/* Gender field */}
                                 <Form.Item<FieldType> 
                                     className="flex-1" 
-                                    label="Client Type"
+                                    label="Gender"
                                     name="gender"
                                     rules={[{ message: 'Select a gender' }]}
                                 >
