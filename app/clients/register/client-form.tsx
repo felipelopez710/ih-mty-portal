@@ -1,6 +1,7 @@
 'use client'
 
-import type { FormProps } from 'antd';
+import { jsClient } from '@/utils/supabase/form-server';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { Form, Button, Input, Select, DatePicker, Spin } from "antd";
@@ -11,6 +12,8 @@ type FieldType = {
     client_name?: string;
     client_type?: string;
     rfc?: string;
+    join_date?: Date;
+    termination_date?: Date;
     legal_representative?: string;
     email?: string;
     website?: string;
@@ -29,17 +32,44 @@ type FieldType = {
 const { TextArea } = Input;
 
 export default function RegistrationForm(){
+    const supabase = jsClient
 
     const router = useRouter();
 
     const [loading, setLoading] = useState(false)
 
-    const onFinish = (e:FieldType) => {
+    async function onFinish(e:FieldType) {
         setLoading(true)
-        console.log('Success:', e);
+        console.log('Sent data:', e);
+
+        const result = await supabase.from('clients').insert({
+            client_name: e.client_name,
+            client_type: e.client_type,
+            rfc: e.rfc,
+            join_date: e.join_date,
+            termination_date: e.termination_date,
+            legal_representative: e.legal_representative,
+            email: e.email,
+            website: e.website,
+            phone_number: e.phone_number,
+            phone_number_2: e.phone_number_2,
+            phone_number_3: e.phone_number_3,
+            address: e.address,
+            neighborhood: e.neighborhood,
+            city: e.city,
+            state: e.state,
+            zip_code: e.zip_code,
+            business_info: e.business_info,
+            notes: e.notes,
+        })
+
         setTimeout(() => {
             router.push('/clients')
-        }, 2500);
+        }, 1000);
+        // console.log(result)
+        /* setTimeout(() => {
+            router.push('/clients')
+        }, 2500); */
     };
 
     return(
@@ -61,7 +91,8 @@ export default function RegistrationForm(){
                 <Button 
                     type="primary" 
                     htmlType="submit"
-                    className="ih-button rounded-lg py-5"
+                    className={`rounded-lg py-5 ${loading? "ih-button-disabled": "ih-button"} `}
+                    disabled={loading}
                 >
                     {loading? <Spin /> : <span>Save client</span>}
                 </Button>
@@ -150,7 +181,7 @@ export default function RegistrationForm(){
                                 label="Legal representative"
                                 name="legal_representative"
                             >
-                                <Input />
+                                <Input/>
                             </Form.Item>
 
                             <div className='field-row flex items-center gap-4'>

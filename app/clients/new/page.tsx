@@ -93,8 +93,8 @@ export default function NewClient() {
                 client_name: values.client_name,
                 client_type: values.client_type,
                 rfc: values.rfc,
-                join_date: values.join_date,
-                termination_date: values.termination_date,
+                /* join_date: values.join_date,
+                termination_date: values.termination_date, */
                 legal_representative: values.legal_representative,
                 email: values.email,
                 website: values.website,

@@ -1,3 +1,4 @@
+import { createClient } from '@/utils/supabase/server'
 import Sidebar from '@/app/uiComponents/sidebar';
 import UtilityBar from '@/app/uiComponents/utilityBar';
 import RegistrationForm from './client-form';

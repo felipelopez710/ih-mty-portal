@@ -109,6 +109,15 @@ export default function ClientInfo({ initialValues, clientInfo }: any) {
                     ''
                 }
                 {
+                    clientInfo.phone_number_3 != null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Phone number 3</div>
+                        <div className='w-2/3'>{clientInfo.phone_number_3}</div>
+                    </div>
+                    :
+                    ''
+                }
+                {
                     clientInfo.address != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Address</div>
@@ -156,19 +165,19 @@ export default function ClientInfo({ initialValues, clientInfo }: any) {
                 <div className='w-full border my-2'></div>
                 <div className='font-semibold mb-2'>Comments</div>
                 {
-                    clientInfo.business != null ?
+                    clientInfo.business_info != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Business info</div>
-                        <div className='w-2/3'>{clientInfo.business}</div>
+                        <div className='w-2/3'>{clientInfo.business_info}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.comments != null ?
+                    clientInfo.notes != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Comments</div>
-                        <div className='w-2/3'>{clientInfo.comments}</div>
+                        <div className='w-1/3 text-slate-400'>Notes</div>
+                        <div className='w-2/3'>{clientInfo.notes}</div>
                     </div>
                     :
                     ''
