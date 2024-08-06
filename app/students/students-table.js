@@ -11,39 +11,30 @@ const columns = [
     {
         field: 'full_name',
         headerName: 'Name',
-        width: 150,
-        editable: true,
+        minWidth: 160,
+        flex: 1,
     },
     {
         field: 'email',
-        headerName: 'Email',
-        width: 150,
-        editable: true,
+        minWidth: 150,
+        flex: 1,
     },
     {
         field: 'mobile',
         headerName: 'Phone',
         width: 150,
-        editable: true,
     },
     {
         field: 'nationality',
         headerName: 'Nationality',
         width: 150,
-        editable: true,
     },
     {
         field: 'client_name',
         headerName: 'Client',
-        width: 150,
-        editable: true,
+        minWidth: 150,
+        flex: 1,
     },
-    {
-        field: 'student_status',
-        headerName: 'Status',
-        width: 150,
-        editable: true,
-    }
 ];
 
 export default function StudentsTable({rows}) {

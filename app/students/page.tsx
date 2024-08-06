@@ -33,7 +33,7 @@ export default async function Students() {
 
                     <div className='page-header flex items-center justify-between'>
                         <div className='font-semibold text-xl'>Students</div>
-                        <Link href="/students/new">
+                        <Link href="/students/register">
                             <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
                                 <AddOutlinedIcon className='mr-1.5'/>
                                 New Student
