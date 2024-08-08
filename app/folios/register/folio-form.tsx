@@ -1,11 +1,14 @@
 'use client'
 
+import { jsClient } from '@/utils/supabase/form-server';
+
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Form, Button, Input, Select, DatePicker, Spin, Space, TimePicker } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 
 /* <----- Test data ------> */
 
@@ -155,25 +158,149 @@ type FieldType = {
     general_comments?: string;
     academic_comments?: string;
     material_covered?: string;
+    frecuency_lines?: any;
+    start_date?: any;
 };
 
 const { TextArea } = Input;
 
-export default function RegistrationForm(){
+export default function RegistrationForm({ groups, levels, coordinators }:any){
+    const supabase = jsClient
+
     const router = useRouter();
+
+    const [form] = Form.useForm()
 
     const [loading, setLoading] = useState(false)
 
+    const [materialOptions, setMaterialOptions] = useState([])
+
+    /* console.log('Groups: ', groups)
+    console.log('Levels: ', levels)
+    console.log('Coordinators: ', coordinators) */
+
     const onFinish = (e:FieldType) => {
         setLoading(true)
-        console.log('Success:', e);
-        setTimeout(() => {
+        console.log('Folio information:', e);
+
+        console.log('Frecuency lines: ', e.frecuency_lines);
+
+        let classesPerDay:any = []
+
+        let listOfClasses: any = []
+
+        let safeLimit = 0
+
+        e.frecuency_lines.map((line:any)=>{
+
+            line.frequency.map((day:any)=>{
+                classesPerDay.push({
+                    dayOfWeek: day,
+                    startTime: dayjs(line.start_date_end_date[0]).format('h:mm A'),
+                    endTime: dayjs(line.start_date_end_date[1]).format('h:mm A'),
+                    duration: dayjs(line.start_date_end_date[1]).diff(line.start_date_end_date[0], 'hour', true),
+                    teacherId: line.teacher,
+                })
+            })
+
+        })
+
+        console.log('Classes per day:', classesPerDay)
+
+        let currentDate = new Date(e.start_date)
+        let cumulativeHours = 0
+
+        // Función para convertir el nombre del día a un número (0 = Domingo, 1 = Lunes, etc.)
+        function dayToNumber(day:any) {
+            const days:any = {
+                "sunday": 0,
+                "monday": 1,
+                "tuesday": 2,
+                "wednesday": 3,
+                "thursday": 4,
+                "friday": 5,
+                "saturday": 6
+            };
+
+            return days[day.toLowerCase()];
+        }
+
+        // Convierte la lista de días de la semana a números
+        let numericClassesPerDay = classesPerDay.map((day:any) => ({
+            dayOfWeek: dayToNumber(day.dayOfWeek),
+            startTime: day.startTime,
+            endTime: day.endTime,
+            duration: day.duration,
+            teacherId: day.teacherId
+        }))
+
+        if(e.contracted_hours){
+            console.log('Contracted hours: ', parseFloat(e.contracted_hours))
+            while (cumulativeHours < parseFloat(e.contracted_hours)) {
+                // Busca el día de la semana actual en la lista de días
+                let currentDay = numericClassesPerDay.find((day:any) => day.dayOfWeek === currentDate.getDay());
+                
+                if (currentDay) {
+                    let classDate = new Date(currentDate);
+
+                    listOfClasses.push({
+                        classDate: classDate,
+                        startTime: currentDay.startTime,
+                        endTime: currentDay.endTime,
+                        duration: currentDay.duration,
+                        teacherId: currentDay.teacherId,
+                    })
+
+                    cumulativeHours += currentDay.duration
+                }
+                // Incrementa la fecha aactual en un día
+                currentDate.setDate(currentDate.getDate() + 1)
+            }
+        }
+
+        console.log('List of classes: ', listOfClasses)
+        /* setTimeout(() => {
             router.push('/folios')
-        }, 2500);
+        }, 2500); */
     };
 
+    function handleClientChange(value : any){
+        /* console.log('Group id: ', value) */
+
+        let selected_group = groups.find((o:any) => o.group_id === parseInt(value))
+
+        /* console.log('Group information: ', selected_group)
+        console.log(selected_group.client_name) */
+
+        form.setFieldValue('client', selected_group.client_name)
+
+        if(selected_group.city !== null && selected_group.state !== null){
+            form.setFieldValue('client_location', `${selected_group.city}, ${selected_group.state}`)
+        } else if(selected_group.city !== null){
+            form.setFieldValue('client_location', selected_group.city)
+        } else if(selected_group.state !== null){
+            form.setFieldValue('client_location', selected_group.state)
+        } else {
+            form.setFieldValue('client_location', null)
+        }
+    }
+
+    async function handleLevelChange(value : any){
+        console.log("Level id", value)
+
+        const { data, error } : any = await supabase
+        .from('materials').
+        select()
+        .eq('level_id', parseInt(value))
+
+        console.log('Materials list: ', data)
+
+        setMaterialOptions(data)
+    }
+
     return(
-        <Form 
+        <Form
+            form={form} 
             className="w-full"
             layout='vertical'
             size='large'
@@ -217,11 +344,17 @@ export default function RegistrationForm(){
                                         name="group"
                                         rules={[{ required: true, message: 'Please select the client type' }]}
                                     >
-                                        <Select>
-                                            <Select.Option value="IH0001">IH0001</Select.Option>
-                                            <Select.Option value="IH0002">IH0002</Select.Option>
-                                            <Select.Option value="IH0002">IH0003</Select.Option>
-                                            <Select.Option value="IH0002">IH0004</Select.Option>
+                                        <Select onChange={handleClientChange}>
+                                            {groups.map((group:any)=>{
+                                                return(
+                                                    <Select.Option 
+                                                        value={group.group_id.toString()}
+                                                        key={group.group_id} 
+                                                    >
+                                                        {group.group_code}
+                                                    </Select.Option>
+                                                )
+                                            })}
                                         </Select>
                                     </Form.Item>
 
@@ -230,9 +363,8 @@ export default function RegistrationForm(){
                                         className="flex-1"
                                         label="Client"
                                         name="client"
-                                        rules={[{ required: true, message: 'Please enter the RFC' }]}
                                     >
-                                        <Input />
+                                        <Input disabled />
                                     </Form.Item>
 
                                 </div>
@@ -244,7 +376,6 @@ export default function RegistrationForm(){
                                         className="flex-1"
                                         label="Client location"
                                         name="client_location"
-                                        rules={[{ required: true, message: 'Please enter the RFC' }]}
                                     >
                                         <Input />
                                     </Form.Item>
@@ -257,7 +388,7 @@ export default function RegistrationForm(){
                                         rules={[{ required: true, message: 'Please select the modality' }]}
                                     >
                                         <Select>
-                                            <Select.Option value="In person">In person</Select.Option>
+                                            <Select.Option value="In person">F2F</Select.Option>
                                             <Select.Option value="Online">Online</Select.Option>
                                         </Select>
                                     </Form.Item>
@@ -273,11 +404,14 @@ export default function RegistrationForm(){
                                         name="level"
                                         rules={[{ required: true, message: 'Please select the level' }]}
                                     >
-                                        <Select>
-                                            <Select.Option value="300 PRE-INTERMEDIATE">300 PRE-INTERMEDIATE</Select.Option>
-                                            <Select.Option value="301 PRE-INTERMEDIATE">301 PRE-INTERMEDIATE</Select.Option>
-                                            <Select.Option value="400 PRE-INTERMEDIATE">400 LOWER-INTERMEDIATE</Select.Option>
-                                            <Select.Option value="400 PRE-INTERMEDIATE">401 LOWER-INTERMEDIATE</Select.Option>
+                                        <Select onChange={handleLevelChange}>
+                                            {levels.map((level:any)=>{
+                                                return (
+                                                    <Select.Option value={level.level_id.toString()} key={level.level_id}>
+                                                        {level.description}
+                                                    </Select.Option>
+                                                )
+                                            })}
                                         </Select>
                                     </Form.Item>
 
@@ -289,11 +423,13 @@ export default function RegistrationForm(){
                                         rules={[{ required: true, message: 'Please select the modality' }]}
                                     >
                                         <Select>
-                                            <Select.Option value="MATERIAL 1">MATERIAL 1</Select.Option>
-                                            <Select.Option value="MATERIAL 2">MATERIAL 2</Select.Option>
-                                            <Select.Option value="MATERIAL 3">MATERIAL 3</Select.Option>
-                                            <Select.Option value="MATERIAL 4">MATERIAL 4</Select.Option>
-                                            <Select.Option value="MATERIAL 5">MATERIAL 5</Select.Option>
+                                            {materialOptions.map((material:any)=>{
+                                                return(
+                                                    <Select.Option value={material.material_id.toString()} key={material.material_id}>
+                                                       {material.material_description}
+                                                    </Select.Option>
+                                                )
+                                            })}
                                         </Select>
                                     </Form.Item>
 
@@ -341,9 +477,13 @@ export default function RegistrationForm(){
                                         rules={[{ required: true, message: 'Please select the level' }]}
                                     >
                                         <Select>
-                                            <Select.Option value="Alejandro Gorosabel">Alejandro Gorosabel</Select.Option>
-                                            <Select.Option value="Juan Rodríguez">Juan Rodríguez</Select.Option>
-                                            <Select.Option value="Rodrigo Montemayor">Rodrigo Montemayor</Select.Option>
+                                            {coordinators.map((coordinator:any)=>{
+                                                return(
+                                                    <Select.Option value={coordinator.coordinator_id.toString()} key={coordinator.coordinator_id}>
+                                                        Alejandro Gorosabel
+                                                    </Select.Option>
+                                                )
+                                            })}
                                         </Select>
                                     </Form.Item>
 
@@ -401,29 +541,14 @@ export default function RegistrationForm(){
                     </div>
                     <div className='fields flex flex-col'>
 
-                        <div className="frecuency-lines  w-full">
+                        <div className="frecuency-lines w-full">
 
-                            <Form.List name="frecuency_lines w-full">
+                            <Form.List name="frecuency_lines">
                                 {(fields, { add, remove }) => (
-                                    <>
+                                    <span key={'list'}>
                                     {fields.map(({ key, name, ...restField }) => (
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2" key={key}>
                                             <div className="w-5 text-center">{key+1}</div>
-                                            <Form.Item
-                                                {...restField}
-                                                label="Start Date"
-                                                name={[name, 'start_date']}
-                                            >
-                                                <DatePicker format="MMM D, YYYY"/>
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                {...restField}
-                                                label="Start time - End time"
-                                                name={[name, 'start_date_end_date']}
-                                            >
-                                                <TimePicker.RangePicker />
-                                            </Form.Item>
 
                                             <Form.Item
                                                 {...restField}
@@ -442,6 +567,14 @@ export default function RegistrationForm(){
                                             </Form.Item>
 
                                             <Form.Item
+                                                {...restField}
+                                                label="Start time - End time"
+                                                name={[name, 'start_date_end_date']}
+                                            >
+                                                <TimePicker.RangePicker />
+                                            </Form.Item>
+
+                                            <Form.Item
                                                 label="Teacher"
                                                 name={[name, 'teacher']}
                                                 rules={[{ required: true, message: 'Choose a teacher' }]}
@@ -450,7 +583,7 @@ export default function RegistrationForm(){
                                                 <Select>
                                                     {teachers.map((teacher:any)=>{
                                                         return(
-                                                            <Select.Option value={teacher.teacher_id}>{teacher.teacher_name}</Select.Option>
+                                                            <Select.Option value={teacher.teacher_id} key={teacher.teacher_id}>{teacher.teacher_name}</Select.Option>
                                                         )
                                                     })}
                                                 </Select>
@@ -464,7 +597,7 @@ export default function RegistrationForm(){
                                             Add a line
                                         </Button>
                                     </Form.Item>
-                                    </>
+                                    </span>
                                 )}
                             </Form.List>
 
