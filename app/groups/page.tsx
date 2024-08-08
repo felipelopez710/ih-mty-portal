@@ -53,7 +53,7 @@ export default function Groups() {
 
                     <div className='page-header flex items-center justify-between'>
                         <div className='font-semibold text-xl'>Groups</div>
-                        <Link href="/groups/new">
+                        <Link href="/groups/register">
                             <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
                                 <AddOutlinedIcon className='mr-1.5'/>
                                 Create Group
