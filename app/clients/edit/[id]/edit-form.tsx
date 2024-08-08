@@ -1,7 +1,9 @@
 'use client'
 
+import { jsClient } from '@/utils/supabase/form-server';
+
 import Link from 'next/link';
-import type { FormProps } from 'antd';
+import { useRouter } from 'next/navigation'
 import { Form, Button, Input, Select, DatePicker, Spin } from "antd";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useState, useEffect } from 'react';
@@ -11,6 +13,8 @@ type FieldType = {
     client_name?: string;
     client_type?: string;
     rfc?: string;
+    join_date?: Date;
+    termination_date?: Date;
     legal_representative?: string;
     email?: string;
     website?: string;
@@ -26,22 +30,53 @@ type FieldType = {
     notes?: string;
 };
 
-const initialClientValues = {
-    client_name: "IENU - Insitituto de Educación de las Naciones Unidas",
-    client_type: "School",
-    rfc: "IENU0001",
-    join_date: "1963-10-14",
-    termination_date: "1999-10-07",
-}
-
 const { TextArea } = Input;
 
 export default function EditForm({ clientInfo }:any){
+    const supabase = jsClient
+
+    const router = useRouter();
 
     const [loading, setLoading] = useState(false)
 
-    const onFinish = (e:FieldType) => {
+    async function onFinish(e:FieldType) {
         setLoading(true)
+        console.log('Sent data: ', e)
+
+        const { data, error } = await supabase
+        .from('clients')
+        .update({
+            client_name: e.client_name,
+            client_type: e.client_type,
+            rfc: e.rfc,
+            join_date: e.join_date,
+            termination_date: e.termination_date,
+            legal_representative: e.legal_representative,
+            email: e.email,
+            website: e.website,
+            phone_number: e.phone_number,
+            phone_number_2: e.phone_number_2,
+            phone_number_3: e.phone_number_3,
+            address: e.address,
+            neighborhood: e.neighborhood,
+            city: e.city,
+            state: e.state,
+            zip_code: e.zip_code,
+            business_info: e.business_info,
+            notes: e.notes,
+        })
+        .eq('client_id', clientInfo.client_id)
+        .select()
+
+        if(data){
+            console.log(data)
+        }
+
+        setTimeout(() => {
+            router.push(`/clients/${clientInfo.client_id}`)
+        }, 1000);
+
+        console.log("Success")
         //console.log('Success:', e);
         //console.log("Client Detail: ", clientInfo)
     };
@@ -65,7 +100,8 @@ export default function EditForm({ clientInfo }:any){
                 <Button 
                     type="primary" 
                     htmlType="submit"
-                    className="ih-button rounded-lg py-5"
+                    className={`rounded-lg py-5 ${loading? "ih-button-disabled": "ih-button"} `}
+                    disabled={loading}
                 >
                     {loading? <Spin /> : <span>Save changes</span>}
                 </Button>
@@ -86,7 +122,7 @@ export default function EditForm({ clientInfo }:any){
                             <Form.Item<FieldType>
                                 label="Client name"
                                 name="client_name"
-                                initialValue={clientInfo !== undefined ? clientInfo.name : null}
+                                initialValue={clientInfo.client_name}
                                 rules={[{ required: true, message: 'Please enter the client name' }]}
                             >
                                 <Input />
@@ -100,8 +136,9 @@ export default function EditForm({ clientInfo }:any){
                                     label="Client Type"
                                     name="client_type"
                                     rules={[{ required: true, message: 'Please select the client type' }]}
+                                    initialValue={clientInfo.client_type}
                                 >
-                                    <Select defaultValue={clientInfo !== undefined ? clientInfo.client_type : null} >
+                                    <Select>
                                         <Select.Option value="School">School</Select.Option>
                                         <Select.Option value="Business">Business</Select.Option>
                                     </Select>
@@ -112,7 +149,7 @@ export default function EditForm({ clientInfo }:any){
                                     className="flex-1"
                                     label="RFC"
                                     name="rfc"
-                                    initialValue={clientInfo !== undefined ? clientInfo.rfc : null}
+                                    initialValue={clientInfo.rfc}
                                     rules={[{ required: true, message: 'Please enter the RFC' }]}
                                 >
                                     <Input />
@@ -127,11 +164,11 @@ export default function EditForm({ clientInfo }:any){
                                     className="flex-1" 
                                     label="Join Date"
                                     name="join_date"
+                                    initialValue={(clientInfo !== undefined && clientInfo.join_date !== null) ? dayjs(clientInfo.join_date, "YYYY-MM-DD") : null}
                                 >
                                     <DatePicker 
                                         className="w-full" 
                                         format="MMM D, YYYY"
-                                        defaultValue={(clientInfo !== undefined && clientInfo.join_date !== null) ? dayjs(clientInfo.join_date, "YYYY-MM-DD") : null}
                                     />
                                 </Form.Item>
 
@@ -140,11 +177,11 @@ export default function EditForm({ clientInfo }:any){
                                     className="flex-1" 
                                     label="Termination Date"
                                     name="termination_date"
+                                    initialValue={(clientInfo !== undefined && clientInfo.termination_date !== null) ? dayjs(clientInfo.termination_date, "YYYY-MM-DD") : null}
                                 >
                                     <DatePicker 
                                         className="w-full" 
                                         format="MMM D, YYYY"
-                                        defaultValue={(clientInfo !== undefined && clientInfo.termination_date !== null) ? dayjs(clientInfo.termination_date, "YYYY-MM-DD") : null}
                                     />
                                 </Form.Item>
 
@@ -163,7 +200,7 @@ export default function EditForm({ clientInfo }:any){
                             <Form.Item<FieldType>
                                 label="Legal representative"
                                 name="legal_representative"
-                                initialValue={clientInfo !== undefined ? clientInfo.legal_representative : null}
+                                initialValue={clientInfo.legal_representative}
                             >
                                 <Input />
                             </Form.Item>
@@ -175,7 +212,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Email"
                                     name="email"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.email : null}
+                                    initialValue={clientInfo.email}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -185,7 +222,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Website"
                                     name="website"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.website : null}
+                                    initialValue={clientInfo.website}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -199,7 +236,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Phone number"
                                     name="phone_number"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.phone_number : null}
+                                    initialValue={clientInfo.phone_number}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -209,7 +246,16 @@ export default function EditForm({ clientInfo }:any){
                                     label="Phone number 2"
                                     name="phone_number_2"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.phone_number_2 : null}
+                                    initialValue={clientInfo.phone_number_2}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+                                <Form.Item<FieldType>
+                                    label="Phone number 3"
+                                    name="phone_number_3"
+                                    className='flex-1'
+                                    initialValue={clientInfo.phone_number_3}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -223,7 +269,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Address"
                                     name="address"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.address : null}
+                                    initialValue={clientInfo.address}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -233,7 +279,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Neighborhood"
                                     name="neighborhood"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.neighborhood : null}
+                                    initialValue={clientInfo.neighborhood}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -247,7 +293,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="City"
                                     name="city"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.city : null}
+                                    initialValue={clientInfo.city}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -257,7 +303,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="State"
                                     name="state"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.state : null}
+                                    initialValue={clientInfo.state}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -267,7 +313,7 @@ export default function EditForm({ clientInfo }:any){
                                     label="Zip Code"
                                     name="zip_code"
                                     className='flex-1'
-                                    initialValue={clientInfo !== undefined ? clientInfo.zip_code : null}
+                                    initialValue={clientInfo.zip_code}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -290,7 +336,7 @@ export default function EditForm({ clientInfo }:any){
                             label="Business info"
                             name="business_info"
                             className='flex-1'
-                            initialValue={clientInfo !== undefined ? clientInfo.business : null}
+                            initialValue={clientInfo.business_info}
                         >
                             <TextArea rows={3}  />
                         </Form.Item>
@@ -300,7 +346,7 @@ export default function EditForm({ clientInfo }:any){
                             label="Notes"
                             name="notes"
                             className='flex-1'
-                            initialValue={clientInfo !== undefined ? clientInfo.comments : null}
+                            initialValue={clientInfo.notes}
                         >
                             <TextArea rows={3}  />
                         </Form.Item>

@@ -7,44 +7,39 @@ const columns = [
     { 
         field: 'client_id', 
         headerName: 'ID', 
-        width: 90 
+        width: 80, 
     },
     {
         field: 'client_name',
         headerName: 'Client Name',
-        width: 150,
-        editable: true,
+        minWidth: 200,
+        flex: 1,
     },
     {
         field: 'client_type',
         headerName: 'Type',
         width: 150,
-        editable: true,
-    },
-    {
-        field: 'city',
-        headerName: 'City',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'state',
-        headerName: 'State',
-        width: 150,
-        editable: true,
     },
     {
         field: 'phone_number',
         headerName: 'Phone',
         width: 150,
-        editable: true,
     },
     {
-        field: 'status',
-        headerName: 'Status',
+        field: 'email',
+        headerName: 'Email',
         width: 150,
-        editable: true,
-    }
+    },
+    {
+        field: 'city',
+        headerName: 'City',
+        width: 150,
+    },
+    {
+        field: 'state',
+        headerName: 'State',
+        width: 150,
+    },
 ];
 
 export default function ClientTable({rows}) {
@@ -64,11 +59,11 @@ export default function ClientTable({rows}) {
                 initialState={{
                 pagination: {
                     paginationModel: {
-                    pageSize: 5,
+                        pageSize: 10,
                     },
                 },
                 }}
-                pageSizeOptions={[5]}
+                pageSizeOptions={[10]}
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.client_id}

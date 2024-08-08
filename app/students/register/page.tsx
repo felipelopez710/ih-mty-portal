@@ -1,9 +1,14 @@
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server';
+
 import Sidebar from '@/app/uiComponents/sidebar';
 import UtilityBar from '@/app/uiComponents/utilityBar';
-import RegistrationForm from './client-form';
+import RegistrationForm from './student-form';
 
-export default function RegisterClient() {
+export default async function RegisterStudent(){
+    const supabase = createClient()
+
+    const { data: clients } = await supabase.from('client_view').select()
+    
     return(
         <main className='w-full'>
 
@@ -16,7 +21,7 @@ export default function RegisterClient() {
                 <div className='w-full flex justify-center content px-8 py-7'>
                     <div className='content-container w-full max-w-5xl'>
 
-                        <RegistrationForm/>
+                        <RegistrationForm clients={clients} />
 
                     </div>
                 </div>

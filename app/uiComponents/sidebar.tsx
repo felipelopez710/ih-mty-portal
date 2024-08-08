@@ -75,7 +75,7 @@ export default function Sidebar() {
               {menuItems.map((item, index) => {
                 const Icon = item.icon
                 return (
-                    <Link href={item.slug}>
+                    <Link href={item.slug} key={index}>
                       <div className={`px-2 py-2 rounded-lg flex items-center text-light-white ${pathname.includes(item.slug) ? 'text-white bg-ih-overlay-blue drop-shadow font-semibold' : ''}`}>
                         <Icon sx={{ fontSize: 20 }} />
                         <div className='pl-2'> {item.label} </div>

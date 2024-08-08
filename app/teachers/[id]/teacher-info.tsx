@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
+import dayjs from 'dayjs';
 
 export default function TeacherInfo({ teacherInfo }: any){
     return(
@@ -47,7 +48,7 @@ export default function TeacherInfo({ teacherInfo }: any){
                     teacherInfo.date_of_birth != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Date of birth</div>
-                        <div className='w-2/3'>{teacherInfo.date_of_birth}</div>
+                        <div className='w-2/3'>{dayjs(teacherInfo.date_of_birth).format('MMMM D, YYYY')}</div>
                     </div>
                     :
                     ''
@@ -92,7 +93,7 @@ export default function TeacherInfo({ teacherInfo }: any){
                     teacherInfo.join_date != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Join date</div>
-                        <div className='w-2/3'>{teacherInfo.join_date}</div>
+                        <div className='w-2/3'>{dayjs(teacherInfo.join_date).format('MMMM D, YYYY')}</div>
                     </div>
                     :
                     ''

@@ -1,5 +1,7 @@
 'use client'
 
+import { jsClient } from '@/utils/supabase/form-server';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { Form, Button, Input, Select, DatePicker, Spin } from "antd";
@@ -12,10 +14,13 @@ type FieldType = {
     surname?: string;
     gender?: string;
     code_ih?: string;
+    date_of_birth?: Date;
     nationality?: string;
     native_language?: string;
     rfc?: string;
     curp?: string;
+    join_date?: Date;
+    quit_date?: Date;
     email?: string;
     mobile?: string,
     phone_number?: string;
@@ -31,16 +36,52 @@ type FieldType = {
 const { TextArea } = Input;
 
 export default function EditForm({ teacherInfo } : any){
+    const supabase = jsClient
+
     const router = useRouter();
 
     const [loading, setLoading] = useState(false)
 
-    const onFinish = (e:FieldType) => {
+    async function onFinish(e:FieldType) {
         setLoading(true)
-        console.log('Success:', e);
+        console.log('Sent data:', e);
+
+        const { data, error } = await supabase
+        .from('teachers')
+        .update({
+            full_name: `${e.name} ${e.surname}`,
+            name: e.name,
+            surname: e.surname,
+            gender: e.gender,
+            code_ih: e.code_ih,
+            date_of_birth: e.date_of_birth,
+            nationality: e.nationality,
+            native_language: e.native_language,
+            rfc: e.rfc,
+            curp: e.curp,
+            join_date: e.join_date,
+            quit_date: e.quit_date,
+            email: e.email,
+            mobile: e.mobile,
+            phone_number: e.phone_number,
+            phone_number_2: e.phone_number_2,
+            address: e.address,
+            neighborhood: e.neighborhood,
+            city: e.city,
+            state: e.state,
+            zip_code: e.zip_code,
+            comments: e.comments,
+        })
+        .eq('teacher_id', teacherInfo.teacher_id)
+        .select()
+
+        if(data){
+            console.log(data)
+        }
+
         setTimeout(() => {
-            router.push('/teachers')
-        }, 2500);
+            router.push(`/teachers/${teacherInfo.teacher_id}`)
+        }, 1000);
     };
 
     return(
@@ -54,7 +95,7 @@ export default function EditForm({ teacherInfo } : any){
             {/* Form header and submit button */}
             <div className='header-container flex justify-between items-center mb-6 w-full'>
                 <div className='text-xl font-semibold flex items-center'>
-                    <Link href={teacherInfo !== undefined ? `/teachers/${teacherInfo.teacher_id}` : 'teachers'}>
+                    <Link href={teacherInfo !== undefined ? `/teachers/${teacherInfo.teacher_id}` : '/teachers'}>
                         <ArrowBackRoundedIcon className='mr-2 text-black hover:text-black'/>
                     </Link>
                     Edit teacher 
@@ -62,7 +103,8 @@ export default function EditForm({ teacherInfo } : any){
                 <Button 
                     type="primary" 
                     htmlType="submit"
-                    className="ih-button rounded-lg py-5"
+                    className={`rounded-lg py-5 ${loading? "ih-button-disabled": "ih-button"}`}
+                    disabled={loading}
                 >
                     {loading? <Spin /> : <span>Save changes</span>}
                 </Button>
@@ -111,11 +153,12 @@ export default function EditForm({ teacherInfo } : any){
                                 {/* Gender field */}
                                 <Form.Item<FieldType> 
                                     className="flex-1" 
-                                    label="Client Type"
+                                    label="Gender"
                                     name="gender"
                                     rules={[{ message: 'Select a gender' }]}
+                                    initialValue={teacherInfo !== undefined ? teacherInfo.gender : null}
                                 >
-                                    <Select defaultValue={teacherInfo !== undefined ? teacherInfo.gender : null} >
+                                    <Select>
                                         <Select.Option value="Female">Female</Select.Option>
                                         <Select.Option value="Male">Male</Select.Option>
                                     </Select>
@@ -140,11 +183,11 @@ export default function EditForm({ teacherInfo } : any){
                                     className="flex-1" 
                                     label="Date of birth"
                                     name="date_of_birth"
+                                    initialValue={(teacherInfo !== undefined && teacherInfo.date_of_birth !== null) ? dayjs(teacherInfo.date_of_birth, "YYYY-MM-DD") : null}
                                 >
                                     <DatePicker 
                                         className="w-full" 
                                         format="MMM D, YYYY"
-                                        defaultValue={(teacherInfo !== undefined && teacherInfo.date_of_birth !== null) ? dayjs(teacherInfo.date_of_birth, "YYYY-MM-DD") : null}
                                     />
                                 </Form.Item>
 
@@ -154,8 +197,9 @@ export default function EditForm({ teacherInfo } : any){
                                     label="Naionality"
                                     name="nationality"
                                     rules={[{ message: 'Select a nationality' }]}
+                                    initialValue={teacherInfo !== undefined ? teacherInfo.nationality : null}
                                 >
-                                    <Select defaultValue={teacherInfo !== undefined ? teacherInfo.nationality : null}>
+                                    <Select>
                                         <Select.Option value="Mexican">Mexican</Select.Option>
                                         <Select.Option value="American">American</Select.Option>
                                         <Select.Option value="Other">Other</Select.Option>
@@ -168,8 +212,9 @@ export default function EditForm({ teacherInfo } : any){
                                     label="Native Language"
                                     name="native_language"
                                     rules={[{ message: 'Select a nationality' }]}
+                                    initialValue={teacherInfo !== undefined ? teacherInfo.native_language : null}
                                 >
-                                    <Select defaultValue={teacherInfo !== undefined ? teacherInfo.native_language : null}>
+                                    <Select>
                                         <Select.Option value="Spanish">Spanish</Select.Option>
                                         <Select.Option value="English">English</Select.Option>
                                         <Select.Option value="Other">Other</Select.Option>
@@ -209,11 +254,11 @@ export default function EditForm({ teacherInfo } : any){
                                     className="flex-1" 
                                     label="Join Date"
                                     name="join_date"
+                                    initialValue={(teacherInfo !== undefined && teacherInfo.join_date !== null) ? dayjs(teacherInfo.join_date, "YYYY-MM-DD"): null}
                                 >
                                     <DatePicker 
                                         className="w-full" 
                                         format="MMM D, YYYY"
-                                        defaultValue={(teacherInfo !== undefined && teacherInfo.join_date !== null) ? dayjs(teacherInfo.join_date, "YYYY-MM-DD"): null}
                                     />
                                 </Form.Item>
 
@@ -222,11 +267,11 @@ export default function EditForm({ teacherInfo } : any){
                                     className="flex-1" 
                                     label="Quit Date"
                                     name="quit_date"
+                                    initialValue={(teacherInfo !== undefined && teacherInfo.quit_date !== null) ? dayjs(teacherInfo.quit_date, "YYYY-MM-DD"): null}
                                 >
                                     <DatePicker 
                                         className="w-full" 
                                         format="MMM D, YYYY"
-                                        defaultValue={(teacherInfo !== undefined && teacherInfo.quit_date !== null) ? dayjs(teacherInfo.quit_date, "YYYY-MM-DD"): null}
                                     />
                                 </Form.Item>
 

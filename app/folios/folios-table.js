@@ -12,32 +12,29 @@ const columns = [
     {
         field: 'group_code',
         headerName: 'Group',
-        width: 150,
-        editable: true,
+        minWidth: 150,
+        flex: 1,
     },
     {
         field: 'client_name',
         headerName: 'Client',
-        width: 150,
-        editable: true,
+        minWidth: 160,
+        flex: 1,
     },
     {
-        field: 'full_name',
-        headerName: 'Teacher',
+        field: 'client_location',
+        headerName: 'Location',
         width: 150,
-        editable: true,
     },
     {
         field: 'start_date',
         headerName: 'Start',
         width: 150,
-        editable: true,
     },
     {
         field: 'end_date',
         headerName: 'End',
         width: 150,
-        editable: true,
     },
 ];
 

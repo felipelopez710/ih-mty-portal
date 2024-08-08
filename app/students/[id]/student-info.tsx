@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
+import dayjs from 'dayjs';
 
-export default function ClientInfo({ initialValues, clientInfo }: any) {
+export default function StudentInfo({ studentInfo }:any){
     return(
         <div className="w-full bg-white rounded-xl p-5 shadow-md flex flex-col gap-6">
             <div className="section-header flex justify-between items-center">
                 <div className="text-base font-semibold">Client Detail</div>
-                <Link href={`/clients/edit/${clientInfo.client_id}`}>
+                <Link href={`/clients/edit/${studentInfo.student_id}`}>
                     <div className="flex gap-1 items-center text-ih-blue">
                         <div className='font-medium'>
                             Edit
@@ -15,173 +16,143 @@ export default function ClientInfo({ initialValues, clientInfo }: any) {
                     </div>
                 </Link>
             </div>
+
             <div className='information-lines w-full flex flex-col gap-2'>
                 {
-                    clientInfo.client_name != null ?
+                    studentInfo.full_name != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Client name</div>
-                        <div className='w-2/3'>{clientInfo.client_name}</div>
+                        <div className='w-1/3 text-slate-400'>Student name</div>
+                        <div className='w-2/3'>{studentInfo.full_name}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.client_type != null ?
+                    studentInfo.gender != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Type</div>
-                        <div className='w-2/3'>{clientInfo.client_type}</div>
+                        <div className='w-1/3 text-slate-400'>Gender</div>
+                        <div className='w-2/3'>{studentInfo.gender}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.rfc != null ?
+                    studentInfo.date_of_birth != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>RFC</div>
-                        <div className='w-2/3'>{clientInfo.rfc}</div>
+                        <div className='w-1/3 text-slate-400'>Gender</div>
+                        <div className='w-2/3'>{dayjs(studentInfo.date_of_birth).format('MMMM D, YYYY')}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.join_date != null ?
+                    studentInfo.nationality != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Join date</div>
-                        <div className='w-2/3'>{clientInfo.join_date}</div>
+                        <div className='w-1/3 text-slate-400'>Nationality</div>
+                        <div className='w-2/3'>{studentInfo.nationality}</div>
                     </div>
                     :
                     ''
                 }
-                {
-                    clientInfo.termination_date != null ?
-                    <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Termination date</div>
-                        <div className='w-2/3'>{clientInfo.termination_date}</div>
-                    </div>
-                    :
-                    ''
-                }
+                
                 <div className='w-full border my-2'></div>
                 <div className='font-semibold mb-2'>Contact information</div>
+
                 {
-                    clientInfo.legal_representative != null ?
-                    <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Legal representative</div>
-                        <div className='w-2/3'>{clientInfo.legal_representative}</div>
-                    </div>
-                    :
-                    ''
-                }
-                {
-                    clientInfo.email != null ?
+                    studentInfo.email != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Email</div>
-                        <div className='w-2/3'>{clientInfo.email}</div>
+                        <div className='w-2/3'>{studentInfo.email}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.website != null ?
+                    studentInfo.mobile != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Website</div>
-                        <div className='w-2/3'>{initialValues.website}</div>
+                        <div className='w-1/3 text-slate-400'>Mobile number</div>
+                        <div className='w-2/3'>{studentInfo.mobile}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.phone_number != null ?
+                    studentInfo.phone_number != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Phone number</div>
-                        <div className='w-2/3'>{clientInfo.phone_number}</div>
+                        <div className='w-2/3'>{studentInfo.phone_number}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.phone_number_2 != null ?
+                    studentInfo.phone_number_2 != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Phone number 2</div>
-                        <div className='w-2/3'>{clientInfo.phone_number_2}</div>
+                        <div className='w-2/3'>{studentInfo.phone_number_2}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.phone_number_3 != null ?
-                    <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Phone number 3</div>
-                        <div className='w-2/3'>{clientInfo.phone_number_3}</div>
-                    </div>
-                    :
-                    ''
-                }
-                {
-                    clientInfo.address != null ?
+                    studentInfo.address != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Address</div>
-                        <div className='w-2/3'>{clientInfo.address}</div>
+                        <div className='w-2/3'>{studentInfo.address}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.neighborhood != null ?
+                    studentInfo.neighborhood != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Neighborhood</div>
-                        <div className='w-2/3'>{clientInfo.neighborhood}</div>
+                        <div className='w-2/3'>{studentInfo.neighborhood}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.city != null ?
+                    studentInfo.city != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>City</div>
-                        <div className='w-2/3'>{clientInfo.city}</div>
+                        <div className='w-2/3'>{studentInfo.city}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.state != null ?
+                    studentInfo.state != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>State</div>
-                        <div className='w-2/3'>{clientInfo.state}</div>
+                        <div className='w-2/3'>{studentInfo.state}</div>
                     </div>
                     :
                     ''
                 }
                 {
-                    clientInfo.zip_code != null ?
+                    studentInfo.zip_code != null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Zip Code</div>
-                        <div className='w-2/3'>{clientInfo.zip_code}</div>
+                        <div className='w-2/3'>{studentInfo.zip_code}</div>
                     </div>
                     :
                     ''
                 }
+
                 <div className='w-full border my-2'></div>
                 <div className='font-semibold mb-2'>Comments</div>
+
                 {
-                    clientInfo.business_info != null ?
+                    studentInfo.comments != null ?
                     <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Business info</div>
-                        <div className='w-2/3'>{clientInfo.business_info}</div>
+                        <div className='w-1/3 text-slate-400'>General comments</div>
+                        <div className='w-2/3'>{studentInfo.comments}</div>
                     </div>
                     :
                     ''
                 }
-                {
-                    clientInfo.notes != null ?
-                    <div className='information-line w-full flex gap-2'>
-                        <div className='w-1/3 text-slate-400'>Notes</div>
-                        <div className='w-2/3'>{clientInfo.notes}</div>
-                    </div>
-                    :
-                    ''
-                }
+
             </div>
         </div>
     )
