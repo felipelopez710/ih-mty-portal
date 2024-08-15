@@ -13,6 +13,10 @@ export default async function RegisterFolio(){
 
     const { data: coordinators } = await supabase.from('coordinators').select()
 
+    const { data: teachers } = await supabase.from('teachers').select()
+
+    const { data: holidays } = await supabase.from('holidays').select()
+
     return(
         <main className='w-full'>
 
@@ -25,7 +29,7 @@ export default async function RegisterFolio(){
                 <div className='w-full flex justify-center content px-8 py-7'>
                     <div className='content-container w-full max-w-5xl'>
 
-                        <RegistrationForm groups={groups} levels={levels} coordinators={coordinators} />
+                        <RegistrationForm groups={groups} levels={levels} coordinators={coordinators} teachers={teachers} holidays={holidays} />
 
                     </div>
                 </div>
