@@ -8,7 +8,7 @@ import Sidebar from "@/app/uiComponents/sidebar"
 import UtilityBar from "@/app/uiComponents/utilityBar"
 import Loading from "@/app/uiComponents/loading";
 import DetailView from "./tabs-content/detail-view/detail-view";
-import CalendarView from "./tabs-content/calendar/calendar";
+import CalendarTab from "./tabs-content/calendar/calendar";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import { Button, Tabs, TabsProps } from "antd";
@@ -66,15 +66,12 @@ export default function FolioDetail(){
         
         // Get the frequency lines from this folio
         const { data: frequencyLines, error: frequencyError } = await supabase.from('frequency_lines_view').select().eq('folio_id', folioId)
-        console.log('Frequency lines: ', frequencyLines)
-
-        frequencyLines? console.log('Frequency example: ', JSON.parse(frequencyLines[0].frequency)) : console.log('Not found')
-
+        //console.log('Frequency lines: ', frequencyLines)
         frequencyLines !== null && frequencyLines.length > 0 ? setFolioFrequency(frequencyLines) : setFolioFrequency(undefined)
 
         // Gets the list of classes form this folio
-        const { data: classes, error: classesError } = await supabase.from('classes').select().eq('folio_id', folioId)
-        //console.log('Classes: ', classes)
+        const { data: classes, error: classesError } = await supabase.from('classes_view').select().eq('folio_id', folioId)
+        console.log('Classes: ', classes)
         classes !== null && classes.length > 0 ? setListOfClasses(classes) : setListOfClasses(undefined)
 
     }
@@ -166,7 +163,7 @@ export default function FolioDetail(){
                                 
                                 {activeTab == '1' ? <DetailView folioInformation={activeFolio} folioFrequency={folioFrequency} /> : ''}
 
-                                {activeTab == '2' ? <CalendarView /> : ''}
+                                {activeTab == '2' ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
 
                             </div>
 
