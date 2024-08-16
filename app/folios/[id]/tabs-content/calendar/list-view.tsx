@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
-export default function ListView({classesList }:any){
+export default function ListView({ classesList, listOfClasses }:any){
 
     const columns: GridColDef<(typeof classesList)[number]>[] = [
         { 
@@ -12,42 +12,36 @@ export default function ListView({classesList }:any){
             width: 90 
         },
         {
-            field: 'class_date',
+            field: 'date',
             headerName: 'Class date',
             flex: 1,
             minWidth: 200,
-            editable: true,
             valueGetter: (value, row) => `${dayjs(row.date).format("MMMM D, YYYY") || ''}`
         },
         {
-            field: 'teacher_name',
+            field: 'teacher',
             headerName: 'Teacher',
             flex: 1,
             minWidth: 200,
-            editable: true,
         },
         {
             field: 'start_time',
             headerName: 'Start time',
             flex: 1,
             minWidth: 120,
-            editable: true,
-            valueGetter: (value, row) => `${dayjs(row.start).format("h:mm A") || ''}`
         },
         {
             field: 'end_time',
             headerName: 'End time',
             flex: 1,
             minWidth: 120,
-            editable: true,
-            valueGetter: (value, row) => `${dayjs(row.end).format("h:mm A") || ''}`
         },
     ];
 
     return(
         <div className='w-fulll'>
             <DataGrid
-                rows={classesList}
+                rows={listOfClasses}
                 columns={columns}
                 initialState={{
                 pagination: {

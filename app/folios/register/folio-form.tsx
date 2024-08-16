@@ -10,109 +10,6 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useState } from 'react';
 import dayjs from 'dayjs';
 
-/* <----- Test data ------> */
-
-const teachers = [
-    {
-        teacher_id: "1",
-        teacher_name: "John Doe"
-    },
-    {
-        teacher_id: "2",
-        teacher_name: "Jane Doe"
-    },
-    {
-        teacher_id: "3",
-        teacher_name: "Michael Smith"
-    }
-]
-
-const classesList = [
-    {
-        class_id: "1",
-        class_number: "1",
-        class_date: "2024-08-05",
-        start_time: "2024-08-05 18:00:00+00",
-        end_time: "2024-08-05 20:00:00+00",
-        folio_id: "1",
-        teacher_id: "1"
-    },
-    {
-        class_id: "2",
-        class_number: "2",
-        class_date: "2024-08-12",
-        start_time: "2024-08-12 18:00:00+00",
-        end_time: "2024-08-12 20:00:00+00",
-        folio_id: "1",
-        teacher_id: "1"
-    },
-    {
-        class_id: "3",
-        class_number: "3",
-        class_date: "2024-08-19",
-        start_time: "2024-08-19 18:00:00+00",
-        end_time: "2024-08-19 20:00:00+00",
-        folio_id: "1",
-        teacher_id: "1"
-    },
-    {
-        class_id: "4",
-        class_number: "1",
-        class_date: "2024-08-07",
-        start_time: "2024-08-07 18:00:00+00",
-        end_time: "2024-08-07 20:00:00+00",
-        folio_id: "2",
-        teacher_id: "2"
-    },
-    {
-        class_id: "5",
-        class_number: "2",
-        class_date: "2024-08-14",
-        start_time: "2024-08-14 18:00:00+00",
-        end_time: "2024-08-14 20:00:00+00",
-        folio_id: "2",
-        teacher_id: "2"
-    },
-    {
-        class_id: "6",
-        class_number: "3",
-        class_date: "2024-08-21",
-        start_time: "2024-08-21 18:00:00+00",
-        end_time: "2024-08-21 20:00:00+00",
-        folio_id: "2",
-        teacher_id: "2"
-    },
-    {
-        class_id: "7",
-        class_number: "1",
-        class_date: "2024-08-09",
-        start_time: "2024-08-09 18:00:00+00",
-        end_time: "2024-08-09 20:00:00+00",
-        folio_id: "3",
-        teacher_id: "3"
-    },
-    {
-        class_id: "8",
-        class_number: "2",
-        class_date: "2024-08-16",
-        start_time: "2024-08-16 18:00:00+00",
-        end_time: "2024-08-16 20:00:00+00",
-        folio_id: "3",
-        teacher_id: "3"
-    },
-    {
-        class_id: "9",
-        class_number: "3",
-        class_date: "2024-08-23",
-        start_time: "2024-08-23 18:00:00+00",
-        end_time: "2024-08-23 20:00:00+00",
-        folio_id: "3",
-        teacher_id: "3"
-    }
-]
-
-/* <----- Test data ------> */
-
 const dayOptions = [
     {
         label: "Mon",
@@ -164,7 +61,7 @@ type FieldType = {
 
 const { TextArea } = Input;
 
-export default function RegistrationForm({ groups, levels, coordinators }:any){
+export default function RegistrationForm({ groups, levels, coordinators, teachers, holidays }:any){
     const supabase = jsClient
 
     const router = useRouter();
@@ -175,11 +72,7 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
 
     const [materialOptions, setMaterialOptions] = useState([])
 
-    /* console.log('Groups: ', groups)
-    console.log('Levels: ', levels)
-    console.log('Coordinators: ', coordinators) */
-
-    const onFinish = (e:FieldType) => {
+    async function onFinish(e:FieldType) {
         setLoading(true)
         console.log('Folio information:', e);
 
@@ -188,8 +81,6 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
         let classesPerDay:any = []
 
         let listOfClasses: any = []
-
-        let safeLimit = 0
 
         e.frecuency_lines.map((line:any)=>{
 
@@ -209,7 +100,12 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
 
         let currentDate = new Date(e.start_date)
         let cumulativeHours = 0
-
+        let absenceDays = []
+        let courseHours
+        if(e.contracted_hours !== undefined){
+            courseHours = parseFloat(e.contracted_hours)
+        }
+        
         // Función para convertir el nombre del día a un número (0 = Domingo, 1 = Lunes, etc.)
         function dayToNumber(day:any) {
             const days:any = {
@@ -243,15 +139,28 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
                 if (currentDay) {
                     let classDate = new Date(currentDate);
 
-                    listOfClasses.push({
-                        classDate: classDate,
-                        startTime: currentDay.startTime,
-                        endTime: currentDay.endTime,
-                        duration: currentDay.duration,
-                        teacherId: currentDay.teacherId,
-                    })
+                    let absenceDate = holidays.find((holiday:any) => (holiday.date) === dayjs(classDate).format('YYYY-MM-DD'))
 
-                    cumulativeHours += currentDay.duration
+                    /* console.log("Comparisson")
+                    console.log("Holiday: ", holidays[0].date)
+                    console.log("Class Date: ", dayjs(classDate).format('YYYY-MM-DD')) */
+
+                    if(absenceDate !== undefined){
+                        absenceDays.push({
+                            date: absenceDate.date,
+                            description: absenceDate.description
+                        })
+                    }else{
+                        listOfClasses.push({
+                            classDate: classDate,
+                            startTime: currentDay.startTime,
+                            endTime: currentDay.endTime,
+                            duration: currentDay.duration,
+                            teacherId: currentDay.teacherId,
+                        })
+    
+                        cumulativeHours += currentDay.duration
+                    }
                 }
                 // Incrementa la fecha aactual en un día
                 currentDate.setDate(currentDate.getDate() + 1)
@@ -259,6 +168,97 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
         }
 
         console.log('List of classes: ', listOfClasses)
+
+        let lastClass = listOfClasses[listOfClasses.length - 1]
+
+        console.log('Last class: ', lastClass.classDate)
+        console.log('Absence days: ', absenceDays)
+
+        const { data: created_folio, error } : any = await supabase
+        .from('folios')
+        .insert({
+            group_id: e.group,
+            client_name: e.client,
+            modality: e.modality,
+            level_id: e.level,
+            material_id: e.material,
+            start_date: e.start_date,
+            end_date: lastClass.classDate,
+            contracted_hours: courseHours,
+            amount_to_invoice: e.amount_to_invoice,
+            coordinator_id: e.coordinator,
+            comments: e.general_comments,
+            academic_comments: e.academic_comments,
+            material_covered: e.material_covered,
+            feedback_taken: false,
+            status: "Active",
+            client_location: e.client_location,
+            holidays: absenceDays.length
+        })
+        .select()
+
+        if (created_folio) {
+            console.log('CREATED FOLIO: ', created_folio)
+
+            let folioId = created_folio[0].folio_id
+
+            // Create frequency lines and link them to the created folio
+
+            let lines_to_create:any = []
+
+            e.frecuency_lines.map((line:any) =>{
+                lines_to_create.push({
+                    folio_id: folioId,
+                    frequency: JSON.stringify(line.frequency),
+                    teacher_id: line.teacher,
+                    start_time: dayjs(line.start_date_end_date[0]).format('h:mm A'),
+                    end_time: dayjs(line.start_date_end_date[1]).format('h:mm A'),
+                })
+            })
+
+            const { data: created_lines, error } = await supabase
+            .from('frequency_lines')
+            .insert(lines_to_create)
+            .select()
+
+            if (created_lines) {
+                console.log('CREATED LINES: ', created_lines)
+            }
+            if (error) {
+                console.log('Error: ', error)
+            }
+
+            // Create the classes and link them to the created folio
+
+            let classes_to_create:any = []
+            listOfClasses.map((clase:any)=>{
+                classes_to_create.push({
+                    folio_id: folioId,
+                    date: clase.classDate,
+                    start_time: clase.startTime,
+                    end_time: clase.endTime,
+                    duration: clase.duration,
+                    teacher_id: clase.teacherId,
+                })
+            })
+
+            const { data: created_classes, error: classesError } = await supabase
+            .from('classes')
+            .insert(classes_to_create)
+            .select()
+
+            if (created_classes) {
+                console.log('CREATED CLASSES: ', created_classes)
+            }
+            if (classesError) {
+                console.log('Error with classes: ', classesError)
+            }
+        }
+
+        if (error) {
+            console.log('Error: ', error)
+        }
+
         /* setTimeout(() => {
             router.push('/folios')
         }, 2500); */
@@ -388,7 +388,7 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
                                         rules={[{ required: true, message: 'Please select the modality' }]}
                                     >
                                         <Select>
-                                            <Select.Option value="In person">F2F</Select.Option>
+                                            <Select.Option value="F2F">F2F</Select.Option>
                                             <Select.Option value="Online">Online</Select.Option>
                                         </Select>
                                     </Form.Item>
@@ -583,7 +583,7 @@ export default function RegistrationForm({ groups, levels, coordinators }:any){
                                                 <Select>
                                                     {teachers.map((teacher:any)=>{
                                                         return(
-                                                            <Select.Option value={teacher.teacher_id} key={teacher.teacher_id}>{teacher.teacher_name}</Select.Option>
+                                                            <Select.Option value={teacher.teacher_id} key={teacher.teacher_id}>{teacher.full_name}</Select.Option>
                                                         )
                                                     })}
                                                 </Select>

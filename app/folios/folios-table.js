@@ -12,7 +12,7 @@ const columns = [
     {
         field: 'group_code',
         headerName: 'Group',
-        minWidth: 150,
+        minWidth: 120,
         flex: 1,
     },
     {
@@ -24,17 +24,18 @@ const columns = [
     {
         field: 'client_location',
         headerName: 'Location',
-        width: 150,
+        minWidth: 150,
+        flex: 1,
     },
     {
         field: 'start_date',
         headerName: 'Start',
-        width: 150,
+        width: 160,
     },
     {
         field: 'end_date',
         headerName: 'End',
-        width: 150,
+        width: 160,
     },
 ];
 

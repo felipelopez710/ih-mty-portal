@@ -1,7 +1,8 @@
 import Link from "next/link"
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
+import dayjs from "dayjs";
 
-export default function FolioInfo(){
+export default function FolioInfo({ folioInformation } : any){
     return(
         <div className="w-full bg-white rounded-xl p-5 shadow-md flex flex-col gap-6">
             <div className="section-header flex justify-between items-center">
@@ -19,85 +20,161 @@ export default function FolioInfo(){
             <div className='information-lines w-full flex flex-col gap-2'>
 
                 {/* Group code */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Group code</div>
-                    <div className='w-2/3'>IH0001</div>
-                </div>
+                {
+                    folioInformation.group_code !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Group code</div>
+                        <div className='w-2/3'>{folioInformation.group_code}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Client */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Client</div>
-                    <div className='w-2/3'>Vitro Corporativo</div>
-                </div>
+                {
+                    folioInformation.client_name !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Client</div>
+                        <div className='w-2/3'>{folioInformation.client_name}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Client location */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Client location</div>
-                    <div className='w-2/3'>Monterrey, N.L.</div>
-                </div>
+                {
+                    folioInformation.client_location !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Client location</div>
+                        <div className='w-2/3'>{folioInformation.client_location}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Modality */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Modality</div>
-                    <div className='w-2/3'>In person</div>
-                </div>
-
+                {
+                    folioInformation.modality !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Modality</div>
+                        <div className='w-2/3'>{folioInformation.modality}</div>
+                    </div>
+                    :
+                    ''
+                }
+            
                 {/* Level */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Level</div>
-                    <div className='w-2/3'>300 PRE-INTERMEDIATE</div>
-                </div>
+                {
+                    folioInformation.level_description !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Level</div>
+                        <div className='w-2/3'>{folioInformation.level_description}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Material */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Material</div>
-                    <div className='w-2/3'>MATERIAL</div>
-                </div>
-
-                {/* Coordinator */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Coordinator</div>
-                    <div className='w-2/3'>Alejandro Gorosabel</div>
-                </div>
+                {
+                    folioInformation.material_description !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Material</div>
+                        <div className='w-2/3'>{folioInformation.material_description}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Contracted hours */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Contracted hours</div>
-                    <div className='w-2/3'>50</div>
-                </div>
+                {
+                    folioInformation.contracted_hours !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Contracted hours</div>
+                        <div className='w-2/3'>{folioInformation.contracted_hours}</div>
+                    </div>
+                    :
+                    ''
+                }
 
-                {/* Amoount to be invoiced */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Amount to be invoiced</div>
-                    <div className='w-2/3'>$1,000</div>
-                </div>
-                
-                {/* Price type */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Price type</div>
-                    <div className='w-2/3'>Group</div>
-                </div>
+                {/* Start date */}
+                {
+                    folioInformation.start_date !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Start date</div>
+                        <div className='w-2/3'>{dayjs(folioInformation.start_date).format('MMMM D, YYYY')}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* End date */}
+                {
+                    folioInformation.end_date !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>End date</div>
+                        <div className='w-2/3'>{dayjs(folioInformation.end_date).format('MMMM D, YYYY')}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* Amount to be invoiced */}
+                {
+                    folioInformation.amount_to_invoice !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Amount to be invoiced</div>
+                        <div className='w-2/3'>${folioInformation.amount_to_invoice}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* Coordinator */}
+                {
+                    folioInformation.coordinator !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Coordinator</div>
+                        <div className='w-2/3'>{folioInformation.coordinator}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 <div className='w-full border my-2'></div>
                 <div className='font-semibold mb-2'>Comments</div>
 
                 {/* General comments */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>General comments</div>
-                    <div className='w-2/3'>Lorem</div>
-                </div>
+                {
+                    folioInformation.comments !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>General comments</div>
+                        <div className='w-2/3'>{folioInformation.comments}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Academic */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Academic</div>
-                    <div className='w-2/3'>Ipsum</div>
-                </div>
+                {
+                    folioInformation.academic_comments !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Academic comments</div>
+                        <div className='w-2/3'>{folioInformation.academic_comments}</div>
+                    </div>
+                    :
+                    ''
+                }
 
                 {/* Material covered */}
-                <div className='information-line w-full flex gap-2'>
-                    <div className='w-1/3 text-slate-400'>Material covered</div>
-                    <div className='w-2/3'>Amet</div>
-                </div>
+                {
+                    folioInformation.material_covered !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Material covered</div>
+                        <div className='w-2/3'>{folioInformation.material_covered}</div>
+                    </div>
+                    :
+                    ''
+                }
 
             </div>
         </div>
