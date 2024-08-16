@@ -132,7 +132,7 @@ export default function CalendarTab({ folioFrequency, listOfClasses }:any){
                             activeView == 'List'? 
                             <ListView classesList={classesList} listOfClasses={listOfClasses} />
                             :
-                            <CalendarView/>
+                            <CalendarView listOfClasses={listOfClasses} />
                         }
                         
                     </div>
