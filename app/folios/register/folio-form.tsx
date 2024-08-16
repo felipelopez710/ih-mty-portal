@@ -210,6 +210,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 lines_to_create.push({
                     folio_id: folioId,
                     frequency: JSON.stringify(line.frequency),
+                    teacher_id: line.teacher,
                     start_time: dayjs(line.start_date_end_date[0]).format('h:mm A'),
                     end_time: dayjs(line.start_date_end_date[1]).format('h:mm A'),
                 })
