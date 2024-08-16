@@ -163,7 +163,7 @@ export default function FolioDetail(){
                                 
                                 {activeTab == '1' ? <DetailView folioInformation={activeFolio} folioFrequency={folioFrequency} /> : ''}
 
-                                {activeTab == '2' ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
+                                {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
 
                             </div>
 
