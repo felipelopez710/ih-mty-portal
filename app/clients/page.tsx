@@ -14,9 +14,9 @@ export default async function Clients() {
 
     const {
         data: { user },
-      } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser();
     
-      if (!user) {
+    if (!user) {
         return redirect("/login");
     }
     
