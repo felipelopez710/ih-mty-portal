@@ -1,4 +1,6 @@
-import { createClient } from "@/utils/supabase/server";
+'use client'
+
+import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
@@ -7,8 +9,6 @@ export default function UtilityBar() {
   const supabase = createClient()
 
   const logout = async () => {
-    'use server'
-    const supabase = createClient()
     await supabase.auth.signOut()
     redirect('/login')
   }
