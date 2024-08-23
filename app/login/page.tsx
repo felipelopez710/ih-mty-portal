@@ -1,8 +1,44 @@
 import Link from "next/link";
+import Image from "next/image";
 import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
+
+const colorCodes = [
+  {
+    id: 1,
+    color: 'bg-rainbow-red'
+  },
+  {
+    id: 2,
+    color: 'bg-rainbow-pink'
+  },
+  {
+    id: 3,
+    color: 'bg-rainbow-magenta'
+  },
+  {
+    id: 4,
+    color: 'bg-rainbow-blue'
+  },
+  {
+    id: 5,
+    color: 'bg-rainbow-green'
+  },
+  {
+    id: 6,
+    color: 'bg-rainbow-lime'
+  },
+  {
+    id: 7,
+    color: 'bg-rainbow-orange'
+  },
+  {
+    id: 8,
+    color: 'bg-rainbow-yellow'
+  },
+]
 
 export default function Login({
   searchParams,
@@ -53,68 +89,79 @@ export default function Login({
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{" "}
-        Back
-      </Link>
+    <main className="w-full min-h-screen bg-light-background flex items-center justify-center">
+      <div className="flex-1 flex flex-col w-full p-8 sm:max-w-md justify-center gap-10 bg-white rounded-xl drop-shadow-login-card">
 
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        <SubmitButton
-          formAction={signIn}
-          className="bg-ih-blue text-white rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing In..."
-        >
-          Sign In
-        </SubmitButton>
-        <SubmitButton
-          formAction={signUp}
-          className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing Up..."
-        >
-          Sign Up
-        </SubmitButton>
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
-          </p>
-        )}
-      </form>
-    </div>
+        <div className="logo-container">
+          <Image
+            src="/logo-ih-mty-color.png"
+            width={164}
+            height={52}
+            alt="logo-ih"
+          />
+        </div>
+
+        <div className="copy-container flex flex-col gap-1">
+          <div className="section-title text-2xl font-semibold">Login to your account</div>
+          <div className="secondary-text text-base text-gray-500 font-light">Enter your credentials bellow</div>
+        </div>
+
+        <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+          <label className="text-md" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="rounded-md px-4 py-2.5 bg-inherit border mb-6"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+          <label className="text-md" htmlFor="password">
+            Password
+          </label>
+          <input
+            className="rounded-md px-4 py-2.5 bg-inherit border mb-6"
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
+          <SubmitButton
+            formAction={signIn}
+            className="ih-button rounded-lg py-3.5 text-white font-semibold text-sm"
+            pendingText="Signing In..."
+          >
+            Sign In
+          </SubmitButton>
+          {/* <SubmitButton
+            formAction={signUp}
+            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+            pendingText="Signing Up..."
+          >
+            Sign Up
+          </SubmitButton>
+          {searchParams?.message && (
+            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+              {searchParams.message}
+            </p>
+          )} */}
+        </form>
+      </div>
+
+      <div className="decorative-stipe w-full h-4 bg-red-600 absolute bottom-0 left-0 flex">
+        {
+          colorCodes.map((color:any)=>{
+            return(
+              <div key={color.id} className={`flex-1 h-full ${color.color}`}></div>
+          )})
+        }
+        {
+          colorCodes.map((color:any)=>{
+            return(
+              <div key={color.id} className={`flex-1 h-full ${color.color}`}></div>
+          )})
+        }
+      </div>
+    </main>
   );
 }
