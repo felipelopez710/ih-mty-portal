@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link';
 import { useEffect } from 'react';
+import TeacherSidebar from '../uiComponents/teacherSidebar';
+import UtilityBar from '../uiComponents/utilityBar';
 import { useAppContext } from "@/context/context";
 import { createClient } from "@/utils/supabase/client";
 
@@ -60,7 +62,7 @@ export default function MyClasses(){
 
                     // Verifica que el usuario tenga el rol de maestro. Si no, lo devuelve al panel de aministración
                     if(user_role[0].role !== 'teacher'){
-                        router.push('home')
+                        router.push('/home')
                     }
                 }
             } else if(userContext.user_role !== 'teacher'){
@@ -72,14 +74,23 @@ export default function MyClasses(){
     useEffect(() => {
       validateUser()
     }, [])
-    
 
     return(
-        <div>
-            <div>My Classes page (only for teachers)</div>
-            <Link href={'/my-calendar'}>
-                <div>Go to Calendar page</div>
-            </Link>
-        </div>
+        <main className='w-full'>
+            <TeacherSidebar/>
+            <div className='page-container w-full min-h-screen pl-52'>
+        
+                <UtilityBar/>
+
+                <div className='w-full content px-8 py-7'>
+
+                    <div className='page-header flex items-center justify-between'>
+                        <div className='font-semibold text-xl'>My classes</div>
+                    </div>
+
+                </div>
+                
+            </div>
+        </main>
     )
 }

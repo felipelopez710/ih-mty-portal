@@ -40,7 +40,7 @@ export default function Home() {
           // Verifica qué rol tiene el usuario y lo envía a su ruta
           switch(user_role[0].role){
             case 'teacher':
-              router.push('/my-classes')
+              router.push('/my-calendar')
               break
             case 'admin':
               router.push('/home')
@@ -65,7 +65,7 @@ export default function Home() {
           // Verifica qué rol tiene el usuario y lo envía a su ruta
           switch(user_role[0].role){
             case 'teacher':
-              router.push('/my-classes')
+              router.push('/my-calendar')
               break
             case 'admin':
               router.push('/home')
