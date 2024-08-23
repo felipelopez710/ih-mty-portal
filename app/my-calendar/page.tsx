@@ -109,7 +109,7 @@ export default function MyCalendar(){
                 <div className='w-full h-full content px-8 py-7 flex-1 flex flex-col gap-5'>
 
                     <div className='page-header flex items-center justify-between'>
-                        <div className='font-semibold text-xl'>My Calendar</div>
+                        <div className='font-semibold text-xl'>My calendar</div>
                     </div>
 
                     <div className="flex-1 flex flex-col items-center justify-center w-full border border-slate-100 rounded-xl bg-white">
