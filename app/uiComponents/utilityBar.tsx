@@ -2,15 +2,17 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
-
+import { useAppContext } from "@/context/context";
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 export default function UtilityBar() {
   const supabase = createClient()
+  const { userContext, setUserContext } = useAppContext()
 
   const logout = async () => {
     await supabase.auth.signOut()
     redirect('/login')
+    setUserContext(undefined)
   }
 
   return (
