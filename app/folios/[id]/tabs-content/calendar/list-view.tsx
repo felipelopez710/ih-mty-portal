@@ -39,18 +39,18 @@ export default function ListView({ classesList, listOfClasses }:any){
     ];
 
     return(
-        <div className='w-fulll'>
+        <div className='w-full'>
             <DataGrid
                 rows={listOfClasses}
                 columns={columns}
                 initialState={{
                 pagination: {
                     paginationModel: {
-                        pageSize: 5,
+                        pageSize: 100,
                     },
                 },
                 }}
-                pageSizeOptions={[5]}
+                pageSizeOptions={[100]}
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.class_id}
