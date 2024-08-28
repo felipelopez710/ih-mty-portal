@@ -17,7 +17,7 @@ export default function DetailView({ studentInfo }:any){
         <div className="w-full max-w-5xl flex flex-col gap-7">
             <div className='header-container flex justify-between items-center w-full'>
                 <div className='text-xl font-semibold flex items-center'>
-                    <Link href={"/clients"}>
+                    <Link href={"/students"}>
                         <ArrowBackRoundedIcon className='mr-2'/>
                     </Link>
                     {studentInfo.full_name}
