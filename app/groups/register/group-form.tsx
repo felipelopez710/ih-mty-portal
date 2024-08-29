@@ -18,6 +18,8 @@ type FieldType = {
 export default function GroupForm({ clients } : any){
     const supabase = jsClient
 
+    const router = useRouter();
+
     const [loading, setLoading] = useState(false)
 
     const [selectedClient, setSelectedClient] = useState(undefined)
@@ -42,7 +44,8 @@ export default function GroupForm({ clients } : any){
             group_code: e.group_code,
             client_id: selected_client,
             members: e.selected_students.length,
-            folios_count: 0
+            folios_count: 0,
+            status: "Active",
         })
         .select()
 
@@ -72,6 +75,10 @@ export default function GroupForm({ clients } : any){
                 console.log('Error: ', error)
             }
         }
+
+        setTimeout(() => {
+            router.push('/folios')
+        }, 2500);
     }
 
     async function handleClientChange(value : any) {
