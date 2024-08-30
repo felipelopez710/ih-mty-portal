@@ -27,6 +27,7 @@ export default function GroupForm({ clients } : any){
     const [studentOptions, setStudentOptions] = useState(null)
 
     async function onFinish(e:FieldType){
+        setLoading(true)
         // console.log("The form was sent")
 
         console.log('Group information: ', e)
@@ -77,7 +78,7 @@ export default function GroupForm({ clients } : any){
         }
 
         setTimeout(() => {
-            router.push('/folios')
+            router.push('/groups')
         }, 2500);
     }
 
