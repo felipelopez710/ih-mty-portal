@@ -1,3 +1,5 @@
+import { createClient } from '@/utils/supabase/server'
+
 import Link from 'next/link';
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -41,7 +43,11 @@ const groups = [
     }
 ]
 
-export default function Groups() {
+export default async function Groups() {
+    const supabase = createClient()
+
+    const { data: groups } = await supabase.from('group_client_view').select()
+
     return(
         <main className='w-full'>
             <Sidebar/>
@@ -61,7 +67,7 @@ export default function Groups() {
                         </Link>
                     </div>
 
-                    <GroupsTable groups={groups} />
+                    <GroupsTable groups={groups?.reverse()} />
 
                 </div>
                 

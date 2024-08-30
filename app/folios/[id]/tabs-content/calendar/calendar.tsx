@@ -104,14 +104,14 @@ export default function CalendarTab({ folioFrequency, listOfClasses }:any){
     const [activeView, setActiveView] = useState("List")
 
     return(
-        <div className="w-full h-full pb-8">
+        <div className="w-full h-full">
             <div className="w-full h-full flex gap-5">
 
                 <div className="w-1/4 h-full">
                     <FolioFrequency folioFrequency={folioFrequency} />
                 </div>
 
-                <div className="h-full flex flex-col gap-4 w-3/4">
+                <div className="h-full flex flex-col gap-4 w-3/4 pt-5">
 
                     <div className="flex items-center justify-between">
 

@@ -44,3 +44,31 @@ body {
 .ant-spin-dot-item {
   background-color: rgb(255, 255, 255) !important;
 }
+
+.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab { /* For tabs border */
+  border-color: rgb(209 213 219);
+}
+
+.ant-tabs-top > .ant-tabs-nav::before { /* For the line to the right and close to the tabs */
+  border-color: rgb(209 213 219);
+}
+
+.ant-tabs > .ant-tabs-nav { /* So that there is no gap between the content and tabs */
+  margin-bottom: 0;
+}
+
+.rbc-month-view{
+  background-color: white;
+}
+
+.rbc-time-view{
+  background-color: white;
+}
+
+.rbc-agenda-view{
+  background-color: white;
+}
+
+.calendar-container{
+  max-height: calc(100vh - 255px);
+}

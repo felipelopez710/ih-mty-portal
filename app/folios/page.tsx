@@ -58,7 +58,7 @@ export default async function Folios() {
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>
-                        <FoliosTable rows={formatedFolios} />
+                        <FoliosTable rows={formatedFolios.reverse()} />
                     </div>
 
                 </div>

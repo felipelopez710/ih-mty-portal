@@ -42,7 +42,7 @@ export default async function Teachers() {
                 </div>
 
                 <div className='px-7 wfull' style={{ height: 'auto', width: '100%' }}>
-                    <TeachersTable rows={teachers} />
+                    <TeachersTable rows={teachers?.reverse()} />
                 </div>
                 
             </div>

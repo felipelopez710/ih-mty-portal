@@ -259,9 +259,9 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             console.log('Error: ', error)
         }
 
-        /* setTimeout(() => {
+        setTimeout(() => {
             router.push('/folios')
-        }, 2500); */
+        }, 2500);
     };
 
     function handleClientChange(value : any){

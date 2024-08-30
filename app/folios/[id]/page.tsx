@@ -9,44 +9,13 @@ import UtilityBar from "@/app/uiComponents/utilityBar"
 import Loading from "@/app/uiComponents/loading";
 import DetailView from "./tabs-content/detail-view/detail-view";
 import CalendarTab from "./tabs-content/calendar/calendar";
+import Attendance from "./tabs-content/attendance/attendance";
+import Grades from "./tabs-content/grades/grades";
+import Payroll from "./tabs-content/payroll/payroll";
+import Invoices from "./tabs-content/invoices/invoices";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import { Button, Tabs, TabsProps } from "antd";
-
-const testFolios = [
-    {
-        group_code: "1",
-        client: "Vitro Corporativo",
-        client_location: "Monterrey, N.L.",
-        modality: "In person",
-        level: "300 PRE-INTERMEDIATE",
-        material: "MATERIAL 1",
-        coordinator: "Alejandro Gorosabel",
-        contracted_hours: "50",
-        amount_to_invoice: "10,000",
-        price_type: "Group",
-        general_comments: "Lorem",
-        academic_comments: "Ipsum",
-        material_covered: "Amet",
-        calendar_confirmed: false,
-        frecuency_lines: [
-            {
-                frecuency: ["Monday", "Wednesday"],
-                start_date: "2024-08-05",
-                start_time: "12:00:00",
-                end_time: "14:00:00",
-                teacher_id: "1",
-            },
-            {
-                frecuency: ["Friday"],
-                start_date: "2024-08-05",
-                start_time: "12:00:00",
-                end_time: "14:00:00",
-                teacher_id: "2",
-            }
-        ]
-    }
-]
 
 export default function FolioDetail(){
     const supabase = jsClient
@@ -125,7 +94,12 @@ export default function FolioDetail(){
 
             {
                 activeFolio === null ?
-                <div className="p-10 pl-52 text-center">Loading...</div>
+                <div className="loading-page w-full pl-52 h-screen flex flex-col">
+                    <UtilityBar/>
+                    <div className="flex-1 flex items-center justify-center">
+                        <Loading/>
+                    </div>
+                </div>
                 :
                 <>
                     {
@@ -164,6 +138,14 @@ export default function FolioDetail(){
                                 {activeTab == '1' ? <DetailView folioInformation={activeFolio} folioFrequency={folioFrequency} /> : ''}
 
                                 {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
+
+                                {activeTab == '3' ? <Attendance/> : ''}
+                                
+                                {activeTab == '4' ? <Grades/> : ''}
+
+                                {activeTab == '5' ? <Payroll/> : ''}
+
+                                {activeTab == '6' ? <Invoices/> : ''}
 
                             </div>
 

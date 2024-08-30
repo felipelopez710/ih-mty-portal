@@ -26,11 +26,11 @@ export default function CalendarView({ listOfClasses }:any){
     })
 
     return(
-        <div className="flex items-center justify-center w-full h-full border border-slate-100 rounded-xl bg-white">
+        <div className="calendar-container flex items-center justify-center w-full h-full border border-slate-100 pb-5">
             <Calendar
                 events={events}
                 localizer={localizer}
-                className='w-full'
+                className='w-full bg-wh'
             />
         </div>
     )

@@ -42,7 +42,7 @@ export default async function Clients() {
                     </div>
 
                     <div className='mt-7' style={{ height: 'auto', width: '100%' }}>
-                        <ClientTable rows={clients} />
+                        <ClientTable rows={clients?.reverse()} />
                     </div>
 
                 </div>

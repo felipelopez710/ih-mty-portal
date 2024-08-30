@@ -40,7 +40,12 @@ export default function TeacherDetial(){
                         <DetailView teacherInfo={teacherInfo} />
                     </div>
                     :
-                    <Loading/>
+                    <div className="loading-page w-full pl-52 h-screen flex flex-col">
+                        <UtilityBar/>
+                        <div className="flex-1 flex items-center justify-center">
+                            <Loading/>
+                        </div>
+                    </div>
                 }
 
                 
