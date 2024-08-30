@@ -39,7 +39,7 @@ export default function ListView({ classesList, listOfClasses }:any){
     ];
 
     return(
-        <div className='w-full'>
+        <div className='w-full pb-5'>
             <DataGrid
                 rows={listOfClasses}
                 columns={columns}

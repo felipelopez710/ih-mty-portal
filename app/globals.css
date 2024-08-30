@@ -73,6 +73,10 @@ body {
   max-height: calc(100vh - 255px);
 }
 
+.list-container{
+  max-height: calc(100vh - 275px);
+}
+
 .h-home-bottom-card{
   max-height: calc(100vh - 376px);
 }
