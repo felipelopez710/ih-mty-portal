@@ -72,3 +72,7 @@ body {
 .calendar-container{
   max-height: calc(100vh - 255px);
 }
+
+.h-home-bottom-card{
+  max-height: calc(100vh - 376px);
+}
