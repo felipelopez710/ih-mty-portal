@@ -54,11 +54,11 @@ export default function StudentsTable({rows}) {
                 initialState={{
                 pagination: {
                     paginationModel: {
-                    pageSize: 5,
+                    pageSize: 10,
                     },
                 },
                 }}
-                pageSizeOptions={[5]}
+                pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
                 disableRowSelectionOnClick
                 getRowId={(row) => row.student_id}
