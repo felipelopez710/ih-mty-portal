@@ -2,16 +2,18 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import TeacherSidebar from '../uiComponents/teacherSidebar';
 import UtilityBar from '../uiComponents/utilityBar';
 import { useAppContext } from "@/context/context";
 import { createClient } from "@/utils/supabase/client";
+import FoliosGrid from './folios-grid';
 
 export default function MyClasses(){
     const supabase = createClient();
     const { userContext, setUserContext } = useAppContext()
     const router = useRouter()
+    const [listOfFolios, setListOfFolios]:any = useState(undefined)
 
     // Checks if there is a user logged in. 
     // If not, takes the user back to the login page
@@ -71,9 +73,23 @@ export default function MyClasses(){
         }
     }
 
+    async function getCourses(){
+        const { data: teacher, error: teacherError } = await supabase.from('teachers').select().eq('user_id', userContext.user_id)
+        console.log('Teacher:', teacher)
+        if(teacher){
+            const { data: courses, error: coursesError } = await supabase.from('folio_teacher_view').select().eq('teacher_id', teacher[0].teacher_id)
+            console.log('Courses: ', courses)
+            courses !== null && courses.length > 0 ? setListOfFolios(courses) : setListOfFolios(undefined)
+        }
+    }
+
     useEffect(() => {
-      validateUser()
-    }, [])
+        validateUser()
+
+        if (userContext !== undefined) {
+            getCourses()
+        }
+    }, [userContext])
 
     return(
         <main className='w-full'>
@@ -84,9 +100,13 @@ export default function MyClasses(){
 
                 <div className='w-full content px-8 py-7'>
 
-                    <div className='page-header flex items-center justify-between'>
+                    <div className='page-header flex items-center justify-between mb-5'>
                         <div className='font-semibold text-xl'>My classes</div>
                     </div>
+                    
+                    {
+                        listOfFolios !== undefined && <FoliosGrid listOfFolios={listOfFolios} />
+                    }
 
                 </div>
                 
