@@ -82,7 +82,15 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
         let listOfClasses: any = []
 
+        let folioTeachers: any = []
+
         e.frecuency_lines.map((line:any)=>{
+
+            let foundTeacher = folioTeachers.find((teacher:any) => teacher === line.teacher)
+            
+            if(foundTeacher === undefined){
+                folioTeachers.push(line.teacher)
+            }
 
             line.frequency.map((day:any)=>{
                 classesPerDay.push({
@@ -97,6 +105,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         })
 
         console.log('Classes per day:', classesPerDay)
+        console.log('Teachers: ', folioTeachers)
 
         let currentDate = new Date(e.start_date)
         let cumulativeHours = 0
@@ -201,6 +210,29 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             console.log('CREATED FOLIO: ', created_folio)
 
             let folioId = created_folio[0].folio_id
+
+            // Create the teacher - folio relationships
+            
+            let relationshipsToCreate:any = []
+
+            folioTeachers.map((line:any)=>{
+                relationshipsToCreate.push({
+                    folio_id: folioId,
+                    teacher_id: line,
+                })
+            })
+
+            const { data: created_relationships, error: relationship_error } = await supabase
+            .from('folio_teacher_relationship')
+            .insert(relationshipsToCreate)
+            .select()
+
+            if (created_relationships) {
+                console.log('CREATED LINES: ', created_relationships)
+            }
+            if (relationship_error) {
+                console.log('Error: ', relationship_error)
+            }
 
             // Create frequency lines and link them to the created folio
 
