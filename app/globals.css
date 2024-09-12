@@ -28,6 +28,10 @@ body {
   }
 }
 
+.ant-btn-primary {
+  background-color: #012a56 !important;
+}
+
 .ih-button {
   background-color: #003A78;
 }

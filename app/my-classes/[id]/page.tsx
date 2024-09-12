@@ -11,6 +11,7 @@ import { createClient } from "@/utils/supabase/client";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Button, Tabs, TabsProps } from "antd";
 import CourseCalendar from './tabs-content/course-calendar';
+import CourseAttendance from './tabs-content/attendance/attendance';
 import dayjs from 'dayjs'
 
 const items: TabsProps['items'] = [
@@ -37,8 +38,13 @@ export default function CourseDetail(){
     const { userContext, setUserContext } = useAppContext()
     const router = useRouter()
     const pathname = usePathname()
-    const [courseClasses, setCourseClasses] : any = useState(undefined)
+    
+    // States that storage all folio information needed (Folio ID, course classes, folio information, group information)
     const [activeFolioId, setActiveFolioId] : any = useState(undefined)
+    const [courseClasses, setCourseClasses] : any = useState(undefined)
+    const [folioDetails, setFolioDetails] : any = useState(undefined)
+    const [groupDetails, setGroupDetails] : any = useState(undefined)
+    const [setstudentsList, setSetstudentsList] = useState(undefined)
 
     // Checks if there is a user logged in. 
     // If not, takes the user back to the login page
@@ -115,7 +121,6 @@ export default function CourseDetail(){
         setActiveFolioId(folioId)
 
         if (userContext !== undefined){
-
             getClasses(folioId)
         }
 
@@ -152,7 +157,18 @@ export default function CourseDetail(){
 
                         {(activeTab == '1' && courseClasses !== undefined) && <CourseCalendar courseClasses={courseClasses} /> }
 
-                        {activeTab == '2' && <div>Course Attendance</div> }
+                        {
+                            (activeTab == '2' && courseClasses !== undefined) 
+                            && 
+                            <CourseAttendance
+                                activeFolioId={activeFolioId} 
+                                courseClasses={courseClasses} 
+                                folioDetails={folioDetails}
+                                setFolioDetails={setFolioDetails} 
+                                groupDetails={groupDetails}
+                                setGroupDetails={setGroupDetails}
+                            /> 
+                        }
 
                         {activeTab == '3' && <div>Course Evaluations</div> }
                         
