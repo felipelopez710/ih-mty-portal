@@ -5,12 +5,16 @@ import { useEffect, useState } from 'react';
 import TeacherSidebar from '../uiComponents/teacherSidebar';
 import UtilityBar from '../uiComponents/utilityBar';
 import PersonalCalendar from './calendar';
+import TeacherCalendar from './teacher-calendar';
 import { useAppContext } from "@/context/context";
 import { createClient } from "@/utils/supabase/client";
 import { Calendar, dayjsLocalizer } from 'react-big-calendar'
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import dayjs from 'dayjs'
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
+import timeGridPlugin from '@fullcalendar/timegrid'
 
 dayjs.extend(customParseFormat);
 
@@ -34,7 +38,7 @@ export default function MyCalendar(){
         
         if (!user) {
             // No hay usuario loggeado
-            return router.push("/login");
+            router.push("/login");
         } else {
             // Existe un usuario loggeado. Se muestra
             console.log(user)
@@ -92,12 +96,12 @@ export default function MyCalendar(){
     }
 
     useEffect(() => {
-      validateUser()
+        validateUser()
 
-      if (userContext !== undefined) {
-        getClasses()
-      }
-    }, [])
+        if (userContext !== undefined) {
+            getClasses()
+        }
+    }, [userContext])
 
     return(
         <main className='w-full min-h-screen'>
@@ -112,15 +116,23 @@ export default function MyCalendar(){
                         <div className='font-semibold text-xl'>My calendar</div>
                     </div>
 
-                    <div className="flex-1 flex flex-col items-center justify-center w-full border border-slate-100 rounded-xl bg-white">
+                    <div className="flex-1 flex flex-col items-center justify-center w-full border border-slate-100 rounded-xl">
                         {
                             listOfClasses !== undefined ?
-                            <PersonalCalendar listOfClasses={listOfClasses} />
+                            <TeacherCalendar listOfClasses={listOfClasses} />
                             :
-                            <Calendar
-                                localizer={localizer}
-                                className='flex-1 w-full'
-                            />
+                            <div className='w-full'>
+                                <FullCalendar
+                                    plugins={[ dayGridPlugin, timeGridPlugin ]}
+                                    initialView="dayGridMonth"
+                                    height={"calc(100vh - 169px)"}
+                                    headerToolbar={{
+                                        start: 'today prev,next', // will normally be on the left. if RTL, will be on the right
+                                        center: 'title',
+                                        end: 'dayGridMonth,timeGridWeek,timeGridDay' // will normally be on the right. if RTL, will be on the left
+                                    }}
+                                />
+                            </div>
                         }
                         
                     </div>

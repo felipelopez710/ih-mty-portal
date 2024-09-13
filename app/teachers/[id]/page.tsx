@@ -12,13 +12,21 @@ export default function TeacherDetial(){
     const supabase = jsClient
     const pathname = usePathname()
 
-    const [teacherInfo, setTeacherInfo] = useState(undefined)
+    const [teacherInfo, setTeacherInfo] : any = useState(undefined)
+    const [teacherClasses, setTeacherClasses] : any = useState(undefined)
 
     async function getTeacherDetail(teacherId : any) {
         const { data: teachers } = await supabase.from('teachers').select().eq("teacher_id", teacherId)
         console.log("Teachers:", teachers)
 
-        teachers !== null ?  setTeacherInfo(teachers[0]) : setTeacherInfo(undefined)
+        if(teachers){
+            setTeacherInfo(teachers[0])
+            const { data: teacherClasses, error: classesError } = await supabase.from('classes').select().eq('teacher_id', teacherId)
+            console.log('Teacher classes: ', teacherClasses)
+            setTeacherClasses(teacherClasses)
+        }else{
+            setTeacherInfo(undefined)
+        }
     }
 
     useEffect(() => {
@@ -37,7 +45,7 @@ export default function TeacherDetial(){
                 {
                     teacherInfo !== undefined ?
                     <div className='w-full content px-8 py-7 flex justify-center'>
-                        <DetailView teacherInfo={teacherInfo} />
+                        <DetailView teacherInfo={teacherInfo} teacherClasses={teacherClasses} />
                     </div>
                     :
                     <div className="loading-page w-full pl-52 h-screen flex flex-col">
