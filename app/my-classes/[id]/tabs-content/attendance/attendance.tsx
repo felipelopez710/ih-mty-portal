@@ -55,34 +55,39 @@ const columns: GridColDef<any>[] = [
 export default function CourseAttendance({ activeFolioId, courseClasses, folioDetails, setFolioDetails, groupDetails, setGroupDetails }:any){
     const supabase = createClient();
 
+    const [activeClass, setActiveClass] : any = useState(undefined)
+    const [classDate, setClassDate] : any = useState(undefined)
+    const [studentsList, setStudentsList] : any = useState(undefined)
+    const [attendanceList, setAttendanceList] : any = useState(undefined)
+    const [loadingList, setLoadingList] : any = useState(true)
+
     /* <----- Modal controlers -----> */
 
     const [modalOpen, setModalOpen] = useState(false)
     
     const showDrawer = () => {
         setModalOpen(true)
+        setLoadingList(true)
     };
     
-      const onClose = () => {
+    const onClose = () => {
         setModalOpen(false)
         setActiveClass(undefined)
         setClassDate(undefined)
+        setAttendanceList(undefined)
     };
 
     /* <----- Modal controlers -----> */
 
     // console.log('Classes to show', courseClasses)
 
-    const [activeClass, setActiveClass] : any = useState(undefined)
-    const [classDate, setClassDate] : any = useState(undefined)
-
     const handleRowClick: GridEventListener<'rowClick'> = async (params) => {
-        console.log(`Class "${params.row.class_id}" clicked`)
+        console.log("Class clicked: ", params.row.class_id)
         if(folioDetails !== undefined){
             console.log('Ya existe el detalle del folio')
             console.log('Folio:', folioDetails)
             console.log('Group:', groupDetails)
-            setActiveClass(params.row.id)
+            setActiveClass(params.row)
             setClassDate({
                 date: params.row.date,
                 start: params.row.start_time,
@@ -100,7 +105,7 @@ export default function CourseAttendance({ activeFolioId, courseClasses, folioDe
                 console.log('Group Details:', folioDetails[0].groups)
                 setFolioDetails(folioDetails[0])
                 setGroupDetails(folioDetails[0].groups)
-                setActiveClass(params.row.id)
+                setActiveClass(params.row)
                 setClassDate({
                     date: params.row.date,
                     start: params.row.start_time,
@@ -132,13 +137,32 @@ export default function CourseAttendance({ activeFolioId, courseClasses, folioDe
                 onRowClick={handleRowClick}
             />
 
-            <GroupList 
-                folioDetails={folioDetails} 
-                activeClass={activeClass} 
-                classDate={classDate} 
+            <Drawer
+                title="Register attendance"
+                width={720}
                 onClose={onClose}
-                modalOpen={modalOpen}
-            />
+                open={modalOpen}
+                styles={{
+                body: {
+                    paddingBottom: 80,
+                },
+                }}
+            >
+                {(folioDetails) &&
+                    <GroupList 
+                        folioDetails={folioDetails} 
+                        activeClass={activeClass} 
+                        classDate={classDate} 
+                        studentsList={studentsList}
+                        setStudentsList={setStudentsList}
+                        loadingList={loadingList}
+                        setLoadingList={setLoadingList}
+                        attendanceList={attendanceList}
+                        setAttendanceList={setAttendanceList}
+                        setModalOpen={setModalOpen}
+                    />
+                }
+            </Drawer>
             
         </div>
     )
