@@ -1,6 +1,7 @@
 'use client'
 
-import { jsClient } from '@/utils/supabase/form-server';
+import { createClient } from '@/utils/supabase/client';
+import { adminAuthClient } from '@/utils/supabase/admin-client';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
@@ -35,7 +36,8 @@ type FieldType = {
 const { TextArea } = Input;
 
 export default function TeacherForm(){
-    const supabase = jsClient
+    const supabase = createClient();
+    const supabaseAdmin = adminAuthClient;
 
     const router = useRouter();
 
@@ -44,34 +46,63 @@ export default function TeacherForm(){
     async function onFinish(e:FieldType) {
         setLoading(true)
         console.log('Sent data:', e);
+        let createdUser
 
-        const { data, error } = await supabase
-        .from('teachers')
-        .insert({
-            full_name: `${e.name} ${e.surname}`,
-            name: e.name,
-            surname: e.surname,
-            gender: e.gender,
-            code_ih: e.code_ih,
-            date_of_birth: e.date_of_birth,
-            nationality: e.nationality,
-            native_language: e.native_language,
-            rfc: e.rfc,
-            curp: e.curp,
-            join_date: e.join_date,
-            quit_date: e.quit_date,
-            email: e.email,
-            mobile: e.mobile,
-            phone_number: e.phone_number,
-            phone_number_2: e.phone_number_2,
-            address: e.address,
-            neighborhood: e.neighborhood,
-            city: e.city,
-            state: e.state,
-            zip_code: e.zip_code,
-            comments: e.comments,
-        })
-        .select()
+        // Create a new user
+        if(e.email !== undefined){
+            const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
+                email: e.email,
+                password: 'IH.mty2024',
+                email_confirm: true,
+            })
+            createdUser = newUser
+
+            if(newUser){
+                console.log('User: ', newUser)
+                console.log('User ID: ', newUser.user?.id)
+                // Create a new role for the user
+                const { data: newRole, error: roleError } = await supabase
+                .from('user_roles')
+                .insert({
+                   user_id: newUser.user?.id,
+                   user_name: `${e.name} ${e.surname}`,
+                   role: 'teacher' 
+                })
+
+                // Create a new Teacher for the user
+                const { data, error } = await supabase
+                .from('teachers')
+                .insert({
+                    user_id: newUser.user?.id,
+                    full_name: `${e.name} ${e.surname}`,
+                    name: e.name,
+                    surname: e.surname,
+                    gender: e.gender,
+                    code_ih: e.code_ih,
+                    date_of_birth: e.date_of_birth,
+                    nationality: e.nationality,
+                    native_language: e.native_language,
+                    rfc: e.rfc,
+                    curp: e.curp,
+                    join_date: e.join_date,
+                    quit_date: e.quit_date,
+                    email: e.email,
+                    mobile: e.mobile,
+                    phone_number: e.phone_number,
+                    phone_number_2: e.phone_number_2,
+                    address: e.address,
+                    neighborhood: e.neighborhood,
+                    city: e.city,
+                    state: e.state,
+                    zip_code: e.zip_code,
+                    comments: e.comments,
+                })
+                .select()
+            }
+            if(signUpError){
+                console.log('Error: ', signUpError)
+            }
+        }
 
         setTimeout(() => {
             router.push('/teachers')
