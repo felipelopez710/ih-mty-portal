@@ -25,6 +25,7 @@ export default function FolioDetail(){
     const [groupInformation, setGroupInformation] : any = useState(undefined)
     const [folioFrequency, setFolioFrequency] : any = useState(undefined)
     const [listOfClasses, setListOfClasses] : any = useState(undefined)
+    const [attendance, setAttendance] : any = useState(undefined)
 
     async function getFolioDetail(folioId : any) {
 
@@ -38,11 +39,15 @@ export default function FolioDetail(){
         //console.log('Frequency lines: ', frequencyLines)
         frequencyLines !== null && frequencyLines.length > 0 ? setFolioFrequency(frequencyLines) : setFolioFrequency(undefined)
 
-        // Gets the list of classes form this folio
+        // Get the list of classes form this folio
         const { data: classes, error: classesError } = await supabase.from('classes_view').select().eq('folio_id', folioId)
-        console.log('Classes: ', classes)
+        //console.log('Classes: ', classes)
         classes !== null && classes.length > 0 ? setListOfClasses(classes) : setListOfClasses(undefined)
 
+        // Get the attendance record from this folio
+        const { data: attendanceRecord, error: attendanceError } = await supabase.from('attendance').select('attendance_id, classes(class_id, date), students(student_id, full_name), attendance').eq('folio_id', folioId)
+        //console.log('Attendance record:', attendanceRecord)
+        attendanceRecord ? setAttendance(attendanceRecord) : setAttendance(undefined)
     }
 
     useEffect(() => {
@@ -56,7 +61,6 @@ export default function FolioDetail(){
     const [activeTab, setActiveTab] = useState('1')
 
     const onChange = (key: string) => {
-        console.log(key);
         setActiveTab(key)
     };
 
@@ -139,7 +143,7 @@ export default function FolioDetail(){
 
                                 {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
 
-                                {activeTab == '3' ? <Attendance/> : ''}
+                                {activeTab == '3' ? <Attendance attendance={attendance} listOfClasses={listOfClasses} /> : ''}
                                 
                                 {activeTab == '4' ? <Grades/> : ''}
 
