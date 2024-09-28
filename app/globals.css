@@ -84,3 +84,7 @@ body {
 .h-home-bottom-card{
   max-height: calc(100vh - 376px);
 }
+
+.css-1086bdv-MuiPaper-root-MuiAccordion-root::before{
+  background-color: transparent;
+}
