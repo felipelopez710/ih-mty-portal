@@ -12,7 +12,7 @@ import { useState } from 'react';
 type FieldType = {
     name?: string;
     surname?: string;
-    alias?: string;
+    alias?:string;
     gender?: string;
     code_ih?: string;
     date_of_birth?: Date;
@@ -107,7 +107,7 @@ export default function TeacherForm(){
         }
 
         setTimeout(() => {
-            router.push('/teachers')
+            router.push('/settings')
         }, 1000);
     };
 
@@ -122,7 +122,7 @@ export default function TeacherForm(){
             {/* Form header and submit button */}
             <div className='header-container flex justify-between items-center mb-6 w-full'>
                 <div className='text-xl font-semibold flex items-center'>
-                    <Link href={"/teachers"}>
+                    <Link href={"/settings"}>
                         <ArrowBackRoundedIcon className='mr-2 text-black hover:text-black'/>
                     </Link>
                     New teacher 
