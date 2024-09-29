@@ -14,15 +14,35 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import NewLevelForm from './components/new-level-modal';
+import NewSubLevelForm from './components/new-sublevel-modal';
 
 export default function LevelsSection(){
     const supabase = createClient();
     const [levelList, setLevelList]:any = useState(undefined)
     const [sublevelList, setSublevelList]:any = useState(undefined)
     const [levelDrawerOpen, setLevelDrawerOpen] = useState(false)
+    const [sublevelDrawerOpen, setSublevelDrawerOpen] = useState(false)
     const [createdLevel, setCreatedLevel]:any = useState(undefined)
-    const [activeForm, setActiveForm] = useState(undefined)
+    const [createdSublevel, setCreatedSublevel]:any = useState(undefined)
     const [activeLevel, setActiveLevel]:any = useState(undefined)
+
+    const openLevelDrawer = () => {
+        setLevelDrawerOpen(true);
+    };
+
+    const onClose = () => {
+        setLevelDrawerOpen(false)
+    }
+
+    const openSublevelDrawer = (levelId:any) => () => {
+        setSublevelDrawerOpen(true);
+        setActiveLevel(levelId)
+    };
+
+    const onCloseSublevel = () => {
+        setSublevelDrawerOpen(false)
+        setActiveLevel(undefined)
+    }
 
     async function getLevels(){
         const { data: levels, error: levelsError } = await supabase.from('levels').select()
@@ -46,18 +66,10 @@ export default function LevelsSection(){
         }
     }
 
-    const openLevelDrawer = () => {
-        setLevelDrawerOpen(true);
-    };
-
-    const onClose = () => {
-        setLevelDrawerOpen(false)
-    }
-
     useEffect(() => {
         getLevels()
         getSublevels()
-    }, [createdLevel])
+    }, [createdLevel, createdSublevel])
     
     return(
         <div className="section-container w-full py-5 flex gap-5 pb-5">
@@ -141,7 +153,12 @@ export default function LevelsSection(){
                                 </AccordionDetails>
                                 <AccordionActions className='p-4'>
                                     <Button>Edit level</Button>
-                                    <Button type="primary">New sublevel</Button>
+                                    <Button 
+                                        type="primary"
+                                        onClick={openSublevelDrawer(level.level_id)}
+                                    >
+                                        New sublevel
+                                    </Button>
                                 </AccordionActions>
                             </Accordion>
                         ))
@@ -155,7 +172,24 @@ export default function LevelsSection(){
                 open={levelDrawerOpen}
                 onClose={onClose}
             >
-                <NewLevelForm setLevelDrawerOpen={setLevelDrawerOpen} setCreatedLevel={setCreatedLevel} />
+                <NewLevelForm 
+                    setLevelDrawerOpen={setLevelDrawerOpen} 
+                    setCreatedLevel={setCreatedLevel} 
+                />
+            </Drawer>
+
+            <Drawer
+                title={'New Sublevel'}
+                width={500}
+                open={sublevelDrawerOpen}
+                onClose={onCloseSublevel}
+            >
+                <NewSubLevelForm 
+                    setSublevelDrawerOpen={setSublevelDrawerOpen} 
+                    setCreatedSublevel={setCreatedSublevel}
+                    levelList={levelList} 
+                    activeLevel={activeLevel}
+                />
             </Drawer>
         </div>
     )
