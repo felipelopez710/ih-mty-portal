@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client';
-import { Button } from 'antd';
+import { Button, Select, Drawer } from 'antd';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -13,11 +13,16 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
+import NewLevelForm from './components/new-level-modal';
 
 export default function LevelsSection(){
     const supabase = createClient();
     const [levelList, setLevelList]:any = useState(undefined)
     const [sublevelList, setSublevelList]:any = useState(undefined)
+    const [levelDrawerOpen, setLevelDrawerOpen] = useState(false)
+    const [createdLevel, setCreatedLevel]:any = useState(undefined)
+    const [activeForm, setActiveForm] = useState(undefined)
+    const [activeLevel, setActiveLevel]:any = useState(undefined)
 
     async function getLevels(){
         const { data: levels, error: levelsError } = await supabase.from('levels').select()
@@ -41,10 +46,18 @@ export default function LevelsSection(){
         }
     }
 
+    const openLevelDrawer = () => {
+        setLevelDrawerOpen(true);
+    };
+
+    const onClose = () => {
+        setLevelDrawerOpen(false)
+    }
+
     useEffect(() => {
         getLevels()
         getSublevels()
-    }, [])
+    }, [createdLevel])
     
     return(
         <div className="section-container w-full py-5 flex gap-5 pb-5">
@@ -61,6 +74,7 @@ export default function LevelsSection(){
                         htmlType="submit"
                         className={'rounded-lg py-5 ih-button'}
                         icon={<AddOutlinedIcon/>}
+                        onClick={openLevelDrawer}
                     >
                         New level
                     </Button>
@@ -135,6 +149,14 @@ export default function LevelsSection(){
                     </div>
                 </div>
             </div>
+            <Drawer
+                title={'New Level'}
+                width={500}
+                open={levelDrawerOpen}
+                onClose={onClose}
+            >
+                <NewLevelForm setLevelDrawerOpen={setLevelDrawerOpen} setCreatedLevel={setCreatedLevel} />
+            </Drawer>
         </div>
     )
 }
