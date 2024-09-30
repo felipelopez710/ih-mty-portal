@@ -47,6 +47,7 @@ type FieldType = {
     client_location?: string;
     modality?: string;
     level?: string;
+    sublevel?: string;
     material?: string;
     coordinator?: string;
     contracted_hours?: string;
@@ -70,6 +71,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
     const [loading, setLoading] = useState(false)
 
+    const [sublevelOptions, setSublevelOptions] = useState([])
     const [materialOptions, setMaterialOptions] = useState([])
 
     async function onFinish(e:FieldType) {
@@ -190,6 +192,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             client_name: e.client,
             modality: e.modality,
             level_id: e.level,
+            sublevel_id: e.sublevel,
             material_id: e.material,
             start_date: e.start_date,
             end_date: lastClass.classDate,
@@ -228,7 +231,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             .select()
 
             if (created_relationships) {
-                console.log('CREATED LINES: ', created_relationships)
+                console.log('CREATED RELATOINSHIPS: ', created_relationships)
             }
             if (relationship_error) {
                 console.log('Error: ', relationship_error)
@@ -285,15 +288,85 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             if (classesError) {
                 console.log('Error with classes: ', classesError)
             }
+
+            // Create the folio evaluations and link them to the folio
+            let evaluations = ['Mid-term exam', 'Final exam', 'Average']
+            let evaluationsToCreate:any = []
+            evaluations.map((evaluation:any)=>{
+                evaluationsToCreate.push({
+                    evaluation_name: evaluation,
+                    folio_id: folioId,
+                })
+            })
+
+            const { data: created_evaluations, error: evaluations_error } = await supabase
+            .from('evaluations')
+            .insert(evaluationsToCreate)
+            .select()
+
+            if (created_evaluations){
+                console.log('CREATED EVALUATIONS: ', created_evaluations)
+            }
+            if (evaluations_error){
+                console.log('Error with evaluations: ', evaluations_error)
+            }
+
+            // Create the folio - students relationship
+            const { data: students, error: studentsError } = await supabase.from('student_per_group').select().eq('group_id', e.group)
+            if (students){
+                let students_to_enrol:any = []
+                students.map((student:any)=>{
+                    students_to_enrol.push({
+                        student_id: student.student_id,
+                        folio_id: folioId,
+                    })
+                })
+
+                const { data: enroledStudents, error: enrolError } = await supabase
+                .from('student_per_folio')
+                .insert(students_to_enrol)
+                .select()
+
+                if(enroledStudents){
+                    console.log('ENROLED STUDENTS: ', enroledStudents)
+                }
+                if(enrolError){
+                    console.log('Error with enroling students: ', enrolError)
+                }
+
+                // Create empty grades for each evaluation and student
+                let gradesToCreate:any = []
+                enroledStudents?.map((student)=>{
+                    created_evaluations?.map((evaluation)=>{
+                        gradesToCreate.push({
+                            student_id: student.student_id,
+                            evaluation_id: evaluation.evaluation_id,
+                        })
+                    })
+                })
+
+                const { data: createdGrades, error: gradesError } = await supabase
+                .from('grades')
+                .insert(gradesToCreate)
+                .select()
+
+                if (createdGrades){
+                    console.log('CREATED GRADES', createdGrades)
+                }
+                if (gradesError){
+                    console.log('Error with grades: ', gradesError)
+                }
+            }
+
+            setTimeout(() => {
+                router.push('/folios')
+            }, 2500);
+
         }
 
         if (error) {
             console.log('Error: ', error)
         }
-
-        setTimeout(() => {
-            router.push('/folios')
-        }, 2500);
     };
 
     function handleClientChange(value : any){
@@ -321,11 +394,23 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         console.log("Level id", value)
 
         const { data, error } : any = await supabase
-        .from('materials').
+        .from('sublevels').
         select()
         .eq('level_id', parseInt(value))
 
-        console.log('Materials list: ', data)
+        console.log('Sublevels list: ', data)
+
+        setSublevelOptions(data)
+    }
+
+    async function handleSublevelChange(value:any){
+        console.log('Sublevel ID: ', value)
+        const { data, error } : any = await supabase
+        .from('materials').
+        select()
+        .eq('sublevel_id', value)
+
+        console.log('Materials options: ', data)
 
         setMaterialOptions(data)
     }
@@ -412,6 +497,10 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                         <Input />
                                     </Form.Item>
 
+                                </div>
+
+                                <div className='field-row flex items-center gap-4'>
+
                                     {/* Modality */}
                                     <Form.Item<FieldType> 
                                         className="flex-1" 
@@ -424,10 +513,6 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                             <Select.Option value="Online">Online</Select.Option>
                                         </Select>
                                     </Form.Item>
-
-                                </div>
-
-                                <div className='field-row flex items-center gap-4'>
 
                                     {/* Level */}
                                     <Form.Item<FieldType> 
@@ -447,7 +532,29 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                         </Select>
                                     </Form.Item>
 
-                                    {/* Group code */}
+                                </div>
+
+                                <div className='field-row flex items-center gap-4'>
+
+                                    {/* Sublevel */}
+                                    <Form.Item<FieldType> 
+                                        className="flex-1" 
+                                        label="Sublevel"
+                                        name="sublevel"
+                                        rules={[{ required: true, message: 'Please select the modality' }]}
+                                    >
+                                        <Select onChange={handleSublevelChange}>
+                                            {sublevelOptions.map((sublevel:any)=>{
+                                                return(
+                                                    <Select.Option value={sublevel.sublevel_id} key={sublevel.sublevel_id}>
+                                                       {sublevel.sublevel}
+                                                    </Select.Option>
+                                                )
+                                            })}
+                                        </Select>
+                                    </Form.Item>
+
+                                    {/* Materials */}
                                     <Form.Item<FieldType> 
                                         className="flex-1" 
                                         label="Materials"
