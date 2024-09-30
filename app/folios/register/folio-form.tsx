@@ -333,6 +333,29 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 if(enrolError){
                     console.log('Error with enroling students: ', enrolError)
                 }
+
+                // Create empty grades for each evaluation and student
+                let gradesToCreate:any = []
+                enroledStudents?.map((student)=>{
+                    created_evaluations?.map((evaluation)=>{
+                        gradesToCreate.push({
+                            student_id: student.student_id,
+                            evaluation_id: evaluation.evaluation_id,
+                        })
+                    })
+                })
+
+                const { data: createdGrades, error: gradesError } = await supabase
+                .from('grades')
+                .insert(gradesToCreate)
+                .select()
+
+                if (createdGrades){
+                    console.log('CREATED GRADES', createdGrades)
+                }
+                if (gradesError){
+                    console.log('Error with grades: ', gradesError)
+                }
             }
 
             setTimeout(() => {
