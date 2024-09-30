@@ -47,6 +47,7 @@ type FieldType = {
     client_location?: string;
     modality?: string;
     level?: string;
+    sublevel?: string;
     material?: string;
     coordinator?: string;
     contracted_hours?: string;
@@ -70,6 +71,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
     const [loading, setLoading] = useState(false)
 
+    const [sublevelOptions, setSublevelOptions] = useState([])
     const [materialOptions, setMaterialOptions] = useState([])
 
     async function onFinish(e:FieldType) {
@@ -190,6 +192,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             client_name: e.client,
             modality: e.modality,
             level_id: e.level,
+            sublevel_id: e.sublevel,
             material_id: e.material,
             start_date: e.start_date,
             end_date: lastClass.classDate,
@@ -228,7 +231,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             .select()
 
             if (created_relationships) {
-                console.log('CREATED LINES: ', created_relationships)
+                console.log('CREATED RELATOINSHIPS: ', created_relationships)
             }
             if (relationship_error) {
                 console.log('Error: ', relationship_error)
@@ -285,6 +288,27 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             if (classesError) {
                 console.log('Error with classes: ', classesError)
             }
+
+            // Create the folio evaluations and link them to the folio
+            let evaluations = ['Mid-term exam', 'Final exam', 'Average']
+            let evaluationsToCreate:any = []
+            evaluations.map((evaluation:any)=>{
+                evaluationsToCreate.push({
+                    evaluation_name: evaluation,
+                    folio_id: folioId,
+                })
+            })
+
+            const { data: created_evaluations, error: evaluations_error } = await supabase
+            .from('evaluations')
+            .insert(evaluationsToCreate)
+
+            if (created_evaluations){
+                console.log('CREATED EVALUATIONS: ', created_evaluations)
+            }
+            if (evaluations_error){
+                console.log('Error with evaluations: ', evaluations_error)
+            }
         }
 
         if (error) {
@@ -321,11 +345,23 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         console.log("Level id", value)
 
         const { data, error } : any = await supabase
-        .from('materials').
+        .from('sublevels').
         select()
         .eq('level_id', parseInt(value))
 
-        console.log('Materials list: ', data)
+        console.log('Sublevels list: ', data)
+
+        setSublevelOptions(data)
+    }
+
+    async function handleSublevelChange(value:any){
+        console.log('Sublevel ID: ', value)
+        const { data, error } : any = await supabase
+        .from('materials').
+        select()
+        .eq('sublevel_id', value)
+
+        console.log('Materials options: ', data)
 
         setMaterialOptions(data)
     }
@@ -412,6 +448,10 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                         <Input />
                                     </Form.Item>
 
+                                </div>
+
+                                <div className='field-row flex items-center gap-4'>
+
                                     {/* Modality */}
                                     <Form.Item<FieldType> 
                                         className="flex-1" 
@@ -424,10 +464,6 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                             <Select.Option value="Online">Online</Select.Option>
                                         </Select>
                                     </Form.Item>
-
-                                </div>
-
-                                <div className='field-row flex items-center gap-4'>
 
                                     {/* Level */}
                                     <Form.Item<FieldType> 
@@ -447,7 +483,29 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                         </Select>
                                     </Form.Item>
 
-                                    {/* Group code */}
+                                </div>
+
+                                <div className='field-row flex items-center gap-4'>
+
+                                    {/* Sublevel */}
+                                    <Form.Item<FieldType> 
+                                        className="flex-1" 
+                                        label="Sublevel"
+                                        name="sublevel"
+                                        rules={[{ required: true, message: 'Please select the modality' }]}
+                                    >
+                                        <Select onChange={handleSublevelChange}>
+                                            {sublevelOptions.map((sublevel:any)=>{
+                                                return(
+                                                    <Select.Option value={sublevel.sublevel_id} key={sublevel.sublevel_id}>
+                                                       {sublevel.sublevel}
+                                                    </Select.Option>
+                                                )
+                                            })}
+                                        </Select>
+                                    </Form.Item>
+
+                                    {/* Materials */}
                                     <Form.Item<FieldType> 
                                         className="flex-1" 
                                         label="Materials"
