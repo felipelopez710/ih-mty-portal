@@ -302,6 +302,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             const { data: created_evaluations, error: evaluations_error } = await supabase
             .from('evaluations')
             .insert(evaluationsToCreate)
+            .select()
 
             if (created_evaluations){
                 console.log('CREATED EVALUATIONS: ', created_evaluations)
@@ -309,15 +310,40 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             if (evaluations_error){
                 console.log('Error with evaluations: ', evaluations_error)
             }
+
+            // Create the folio - students relationship
+            const { data: students, error: studentsError } = await supabase.from('student_per_group').select().eq('group_id', e.group)
+            if (students){
+                let students_to_enrol:any = []
+                students.map((student:any)=>{
+                    students_to_enrol.push({
+                        student_id: student.student_id,
+                        folio_id: folioId,
+                    })
+                })
+
+                const { data: enroledStudents, error: enrolError } = await supabase
+                .from('student_per_folio')
+                .insert(students_to_enrol)
+                .select()
+
+                if(enroledStudents){
+                    console.log('ENROLED STUDENTS: ', enroledStudents)
+                }
+                if(enrolError){
+                    console.log('Error with enroling students: ', enrolError)
+                }
+            }
+
+            setTimeout(() => {
+                router.push('/folios')
+            }, 2500);
+
         }
 
         if (error) {
             console.log('Error: ', error)
         }
-
-        setTimeout(() => {
-            router.push('/folios')
-        }, 2500);
     };
 
     function handleClientChange(value : any){
