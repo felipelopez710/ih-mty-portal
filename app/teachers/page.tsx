@@ -6,6 +6,7 @@ import Sidebar from '../uiComponents/sidebar'
 import UtilityBar from '../uiComponents/utilityBar'
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import TableRowsOutlinedIcon from '@mui/icons-material/TableRowsOutlined';
 
 export default async function Teachers() {
     const supabase = createClient()
@@ -31,12 +32,21 @@ export default async function Teachers() {
 
                     <div className='page-header flex items-center justify-between'>
                         <div className='font-semibold text-xl'>Teachers</div>
-                        <Link href={"/teachers/register"}>
-                            <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
-                                <AddOutlinedIcon className='mr-1.5'/>
-                                New Teacher
-                            </button>
-                        </Link>
+                        <div className='action-buttons flex gap-3 items-center'>
+                            <Link href={"/teachers/timetable-viewer"}>
+                                <button className='button flex items-center px-4 py-2 bg-gray-200 rounded-lg font-medium hover:bg-gray-300'>
+                                    <TableRowsOutlinedIcon className='mr-1.5'/>
+                                    Timetable Viewer
+                                </button>
+                            </Link>
+
+                            <Link href={"/teachers/register"}>
+                                <button className='button flex items-center px-4 py-2 bg-ih-blue rounded-lg text-white font-medium'>
+                                    <AddOutlinedIcon className='mr-1.5'/>
+                                    New Teacher
+                                </button>
+                            </Link>
+                        </div>
                     </div>
 
                 </div>
