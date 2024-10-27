@@ -12,7 +12,7 @@ type FieldType = {
     sublevel_id?: string;
 };
 
-export default function NewMaterialForm({setDrawerOpen, setCreatedMaterial}:any){
+export default function EditMaterialForm({setEditDrawer, setCreatedMaterial, defaultValues}:any){
     const supabase = createClient()
     const router = useRouter();
     const [form] = Form.useForm()
@@ -25,18 +25,19 @@ export default function NewMaterialForm({setDrawerOpen, setCreatedMaterial}:any)
         setLoading(true)
         console.log('Sent data:', e);
 
-        const { data: newMaterial, error: materialError } = await supabase.from('materials').insert({
+        const { data: updatedMaterial, error: materialError } = await supabase.from('materials').update({
             material_description: e.material_description,
             price_to_public: e.price_to_public,
             level_id: e.level_id,
             sublevel_id: e.sublevel_id,
         })
+        .eq('material_id', defaultValues.material_id)
         .select()
 
         setTimeout(() => {
             form.resetFields()
-            setDrawerOpen(false)
-            setCreatedMaterial(newMaterial)
+            setEditDrawer(false)
+            setCreatedMaterial(updatedMaterial)
             setLoading(false)
         }, 1000);
     };
@@ -49,6 +50,18 @@ export default function NewMaterialForm({setDrawerOpen, setCreatedMaterial}:any)
         if(levelsError){
             console.log('Error:', levelsError)
         }
+        const { data: sublevels, error: sublevelsError } = await supabase.from('sublevels').select().eq('level_id', defaultValues.level_id)
+        if (sublevels){
+            setSublevelsOptions(sublevels)
+        }
+        if(sublevelsError){
+            console.log('Error: ', sublevelsError)
+        }
+
+        form.setFieldValue('material_description', defaultValues.material_description)
+        form.setFieldValue('price_to_public', defaultValues.price_to_public)
+        form.setFieldValue('level_id', defaultValues.level_id)
+        form.setFieldValue('sublevel_id', defaultValues.sublevel_id)
     }
 
     const onLevelChange = async (value: string) => {
@@ -63,8 +76,11 @@ export default function NewMaterialForm({setDrawerOpen, setCreatedMaterial}:any)
     };
 
     useEffect(() => {
-        getLevels()
-    }, []) 
+        // Checks if the defualt values exists.
+        if(defaultValues){
+            getLevels()
+        }
+    }, [defaultValues]) 
 
     return(
         <div className="">
@@ -123,12 +139,12 @@ export default function NewMaterialForm({setDrawerOpen, setCreatedMaterial}:any)
                 </div>
                 
                 <div className='action-buttons flex gap-2 items-center justify-end py-5 border-t border-gray-300'>
-                    <Button onClick={()=> setDrawerOpen(false)}>Cancel</Button>
+                    <Button onClick={() => setEditDrawer(false)}>Cancel</Button>
                     <Button 
                         type="primary"
                         htmlType="submit"
                     >
-                        {loading? <Spin /> : <span>Save level</span>}
+                        {loading? <Spin /> : <span>Save changes</span>}
                     </Button>
                 </div>
             </Form>

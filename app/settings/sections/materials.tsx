@@ -9,25 +9,43 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import { useEffect, useState } from 'react';
 import NewMaterialForm from './components/new-material-modal';
+import EditMaterialForm from './components/edit-material-modal';
 
 export default function MaterialsSection(){
     const supabase = createClient();
     const [materialList, setMaterialList]:any = useState(undefined)
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [createdMaterial, setCreatedMaterial] = useState(undefined)
+    const [editDrawer, setEditDrawer] = useState(false)
+    const [defaultValues, setDefaultValues]:any = useState(undefined) // Stores the initial values of the 'Edit material' form
 
+    // Opens the 'New material' modal
     const openDrawer = () => {
         setDrawerOpen(true);
     };
 
+    // Closes the 'New material' modal
     const onClose = () => {
         setDrawerOpen(false)
+    }
+
+    // Opens the 'Edit material' modal
+    const openEditDrawer = (material:any) => () => {
+        console.log(material)
+        setDefaultValues(material)
+        setEditDrawer(true);
+    };
+
+    // Closes the 'Edit material' modal
+    const onEditDrawerClose = () => {
+        setEditDrawer(false)
+        setDefaultValues(undefined)
     }
 
     async function getMaterials(){
         const { data:materials, error:materialError } = await supabase.from('materials').select('*, levels(level_id, level), sublevels(sublevel_id, sublevel)')
         if(materials){
-            console.log(materials)
+            // console.log(materials)
             setMaterialList(materials)
         }
         if(materialError){
@@ -92,7 +110,9 @@ export default function MaterialsSection(){
                                         </div>
                                         <div className='w-1/4'>{`$${material.price_to_public}`}</div>
                                         <div className='flex items-center gap-2 w-14 justify-end'>
-                                            <EditOutlinedIcon/>
+                                            <div className='cursor-pointer' onClick={openEditDrawer(material)}>
+                                                <EditOutlinedIcon/>
+                                            </div>
                                             <RemoveCircleOutlineOutlinedIcon/>
                                         </div>
                                     </div>
@@ -109,6 +129,14 @@ export default function MaterialsSection(){
                 onClose={onClose}
             >
                 <NewMaterialForm setDrawerOpen={setDrawerOpen} setCreatedMaterial={setCreatedMaterial} />
+            </Drawer>
+            <Drawer
+                title={'Edit Material'}
+                width={500}
+                open={editDrawer}
+                onClose={onEditDrawerClose}
+            >
+                <EditMaterialForm setEditDrawer={setEditDrawer} setCreatedMaterial={setCreatedMaterial} defaultValues={defaultValues} />
             </Drawer>
         </div>
     )
