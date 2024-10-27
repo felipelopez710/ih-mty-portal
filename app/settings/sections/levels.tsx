@@ -15,6 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import NewLevelForm from './components/new-level-modal';
 import NewSubLevelForm from './components/new-sublevel-modal';
+import EditLevelForm from './components/edit-level-modal';
 
 export default function LevelsSection(){
     const supabase = createClient();
@@ -25,20 +26,40 @@ export default function LevelsSection(){
     const [createdLevel, setCreatedLevel]:any = useState(undefined)
     const [createdSublevel, setCreatedSublevel]:any = useState(undefined)
     const [activeLevel, setActiveLevel]:any = useState(undefined)
+    const [defaultValues, setDefaultValues]:any = useState(undefined)
+    const [editLevelDrawer, setEditLevelDrawer] = useState(false) // Controls the 'Edit level' modal (true = open)
 
+    // Opens the 'New Level' modal
     const openLevelDrawer = () => {
         setLevelDrawerOpen(true);
     };
 
+    // Closes the 'New Level' modal
     const onClose = () => {
         setLevelDrawerOpen(false)
     }
 
+    // Opens the 'Edit level' modal
+    const openEditLevelDrawer = (level:any) => () => {
+        console.log(level)
+        setDefaultValues(level)
+        setEditLevelDrawer(true);
+    };
+
+    // Closes the 'Edit level' modal
+    const onEditLevelDrawerClose = () => {
+        setEditLevelDrawer(false)
+        setDefaultValues(undefined)
+    }
+
+
+    // Opens the 'New sublevel' modal
     const openSublevelDrawer = (levelId:any) => () => {
         setSublevelDrawerOpen(true);
         setActiveLevel(levelId)
     };
 
+    // Closes the 'New sublevel' modal
     const onCloseSublevel = () => {
         setSublevelDrawerOpen(false)
         setActiveLevel(undefined)
@@ -152,7 +173,7 @@ export default function LevelsSection(){
                                     }
                                 </AccordionDetails>
                                 <AccordionActions className='p-4'>
-                                    <Button>Edit level</Button>
+                                    <Button onClick={openEditLevelDrawer(level)}>Edit level</Button>
                                     <Button 
                                         type="primary"
                                         onClick={openSublevelDrawer(level.level_id)}
@@ -175,6 +196,18 @@ export default function LevelsSection(){
                 <NewLevelForm 
                     setLevelDrawerOpen={setLevelDrawerOpen} 
                     setCreatedLevel={setCreatedLevel} 
+                />
+            </Drawer>
+            <Drawer
+                title={'Edit Level'}
+                width={500}
+                open={editLevelDrawer}
+                onClose={onEditLevelDrawerClose}
+            >
+                <EditLevelForm
+                    setEditLevelDrawer={setEditLevelDrawer} 
+                    setCreatedLevel={setCreatedLevel} 
+                    defaultValues={defaultValues}
                 />
             </Drawer>
 
