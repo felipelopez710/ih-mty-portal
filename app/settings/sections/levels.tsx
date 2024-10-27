@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import NewLevelForm from './components/new-level-modal';
 import NewSubLevelForm from './components/new-sublevel-modal';
 import EditLevelForm from './components/edit-level-modal';
+import EditSubLevelForm from './components/edit-sublevel-modal';
 
 export default function LevelsSection(){
     const supabase = createClient();
@@ -28,6 +29,7 @@ export default function LevelsSection(){
     const [activeLevel, setActiveLevel]:any = useState(undefined)
     const [defaultValues, setDefaultValues]:any = useState(undefined)
     const [editLevelDrawer, setEditLevelDrawer] = useState(false) // Controls the 'Edit level' modal (true = open)
+    const [editSublevelDrawer, setEditSublevelDrawer] = useState(false) // Controls the 'Edit sublevel' modal (true = open)
 
     // Opens the 'New Level' modal
     const openLevelDrawer = () => {
@@ -63,6 +65,19 @@ export default function LevelsSection(){
     const onCloseSublevel = () => {
         setSublevelDrawerOpen(false)
         setActiveLevel(undefined)
+    }
+
+    // Opens the 'Edit level' modal
+    const openEditSublevelDrawer = (sublevel:any) => () => {
+        console.log(sublevel)
+        setDefaultValues(sublevel)
+        setEditSublevelDrawer(true);
+    };
+
+    // Closes the 'Edit level' modal
+    const onEditSublevelDrawerClose = () => {
+        setEditSublevelDrawer(false)
+        setDefaultValues(undefined)
     }
 
     async function getLevels(){
@@ -160,7 +175,9 @@ export default function LevelsSection(){
                                                                     <div className='text-xs'>{sublevel.description}</div>
                                                                 </div>
                                                                 <div className='flex items-center gap-2'>
-                                                                    <EditOutlinedIcon/>
+                                                                    <div className='cursor-pointer' onClick={openEditSublevelDrawer(sublevel)}>
+                                                                        <EditOutlinedIcon/>
+                                                                    </div>
                                                                     <RemoveCircleOutlineOutlinedIcon/>
                                                                 </div>
                                                             </div>
@@ -222,6 +239,19 @@ export default function LevelsSection(){
                     setCreatedSublevel={setCreatedSublevel}
                     levelList={levelList} 
                     activeLevel={activeLevel}
+                />
+            </Drawer>
+            <Drawer
+                title={'Edit Sublevel'}
+                width={500}
+                open={editSublevelDrawer}
+                onClose={onEditSublevelDrawerClose}
+            >
+                <EditSubLevelForm
+                    setEditSublevelDrawer={setEditSublevelDrawer} 
+                    setCreatedSublevel={setCreatedSublevel}
+                    levelList={levelList} 
+                    defaultValues={defaultValues}
                 />
             </Drawer>
         </div>
