@@ -30,6 +30,7 @@ export default function GroupDetail(){
     const pathname = usePathname()
 
     const [activeGroup, setActiveGroup]:any = useState(null)
+    const [groupStudents, setGroupStudents]:any = useState(null)
     const [foliosList, setFoliosList]:any = useState(null)
     const [activeTab, setActiveTab] = useState('1')
 
@@ -42,6 +43,13 @@ export default function GroupDetail(){
         const { data: group, error: groupError } = await supabase.from('group_client_view').select().eq('group_id', group_id)
         console.log('Group information: ', group)
         group !== null && group.length > 0 ? setActiveGroup(group[0]) : setActiveGroup(undefined)
+
+        // Get the list of students from this group
+        const { data: studentList, error: studentsError } = await supabase.from('student_per_group').select('*, students(student_id, full_name, email)').eq('group_id', group_id)
+        console.log('Students in this group: ', studentList)
+        if (studentList){
+            setGroupStudents(studentList)
+        }
 
         // Get the lits of folios from this group
         const { data: foliosList, error: foliosError } = await supabase.from('folio_details_view').select().eq('group_id', group_id)
@@ -90,7 +98,6 @@ export default function GroupDetail(){
                                         {`Group ${activeGroup.group_code}`}
                                     </div> 
                                     <Button 
-                                        type="primary" 
                                         icon={<ExpandMoreOutlinedIcon />}
                                         className="export-button"
                                         iconPosition="end"
@@ -106,7 +113,7 @@ export default function GroupDetail(){
 
                             <div className="bottom-section px-8 h-full">
                                 
-                                { activeTab === '1' && <DetailsTab groupInformation={activeGroup} /> }
+                                { activeTab === '1' && <DetailsTab groupInformation={activeGroup} groupStudents={groupStudents} folios={foliosList} /> }
 
                                 { activeTab === '2' && <FoliosTab folios={foliosList} /> }
 
