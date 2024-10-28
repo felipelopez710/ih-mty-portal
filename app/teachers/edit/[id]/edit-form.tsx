@@ -1,7 +1,6 @@
 'use client'
 
-import { jsClient } from '@/utils/supabase/form-server';
-
+import { createClient } from '@/utils/supabase/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { Form, Button, Input, Select, DatePicker, Spin } from "antd";
@@ -36,7 +35,7 @@ type FieldType = {
 const { TextArea } = Input;
 
 export default function EditForm({ teacherInfo } : any){
-    const supabase = jsClient
+    const supabase = createClient();
 
     const router = useRouter();
 
@@ -45,6 +44,7 @@ export default function EditForm({ teacherInfo } : any){
     async function onFinish(e:FieldType) {
         setLoading(true)
         console.log('Sent data:', e);
+        console.log('User ID to update: ', teacherInfo.user_id)
 
         const { data, error } = await supabase
         .from('teachers')
@@ -75,8 +75,21 @@ export default function EditForm({ teacherInfo } : any){
         .eq('teacher_id', teacherInfo.teacher_id)
         .select()
 
+        const { data: updatedRole, error: roleError } = await supabase.from('user_roles').update({
+            user_name: `${e.name} ${e.surname}`
+        })
+        .eq('user_id', teacherInfo.user_id)
+        .select()
+
         if(data){
-            console.log(data)
+            console.log('Updated teacher', data)
+        }
+
+        if(updatedRole){
+            console.log('Updated role', updatedRole)
+        }
+        if(roleError){
+            console.log('Error', roleError)
         }
 
         setTimeout(() => {
