@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client';
-import { Button, Select, Drawer } from 'antd';
+import { Button, Select, Drawer, Modal } from 'antd';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -20,6 +20,7 @@ import EditSubLevelForm from './components/edit-sublevel-modal';
 
 export default function LevelsSection(){
     const supabase = createClient();
+    const [loading, setLoading] = useState(false)
     const [levelList, setLevelList]:any = useState(undefined)
     const [sublevelList, setSublevelList]:any = useState(undefined)
     const [levelDrawerOpen, setLevelDrawerOpen] = useState(false)
@@ -30,6 +31,8 @@ export default function LevelsSection(){
     const [defaultValues, setDefaultValues]:any = useState(undefined)
     const [editLevelDrawer, setEditLevelDrawer] = useState(false) // Controls the 'Edit level' modal (true = open)
     const [editSublevelDrawer, setEditSublevelDrawer] = useState(false) // Controls the 'Edit sublevel' modal (true = open)
+    const [deleteSublevelModal, setDeleteSublevelModal] = useState(false) // Controls the 'Delete Sublevel' modal (true = open)
+    const [sublevelToDelete, setSublevelToDelete]:any = useState(undefined)
 
     // Opens the 'New Level' modal
     const openLevelDrawer = () => {
@@ -54,7 +57,6 @@ export default function LevelsSection(){
         setDefaultValues(undefined)
     }
 
-
     // Opens the 'New sublevel' modal
     const openSublevelDrawer = (levelId:any) => () => {
         setSublevelDrawerOpen(true);
@@ -78,6 +80,35 @@ export default function LevelsSection(){
     const onEditSublevelDrawerClose = () => {
         setEditSublevelDrawer(false)
         setDefaultValues(undefined)
+    }
+
+    // Opens the 'Delete sublevel' modal
+    const openDeleteSublevelModal = (sublevel:any) => () => {
+        setSublevelToDelete(sublevel)
+        setDeleteSublevelModal(true)
+    }
+
+    // Closes the 'Delete sublevel' modal
+    const closeDeleteSublevelModal = () => {
+        setSublevelToDelete(undefined)
+        setDeleteSublevelModal(false)
+    }
+
+    // Deactivate the selected sublevel
+    const deactivateSublevel = async() => {
+        setLoading(true)
+        const { data: updatedSublevel, error: sublevelError } = await supabase.from('sublevels').update({
+            status: 'disabled'
+        })
+        .eq('sublevel_id', sublevelToDelete.sublevel_id)
+        .select()
+
+        setTimeout(() => {
+            setLoading(false)
+            setSublevelToDelete(undefined)
+            setCreatedSublevel(updatedSublevel)
+            setDeleteSublevelModal(false)
+        }, 1000);
     }
 
     async function getLevels(){
@@ -167,7 +198,7 @@ export default function LevelsSection(){
                                             <div>Sublevels</div>
                                             {
                                                 sublevelList.map((sublevel:any)=>{
-                                                    if(sublevel.level_id === level.level_id){
+                                                    if((sublevel.level_id === level.level_id) && (sublevel.status !== 'disabled')){
                                                         return(
                                                             <div key={sublevel.sublevel_id} className='w-full px-4 py-3 rounded-lg border border-gray-300 flex items-center gap-5'>
                                                                 <div className='flex-1 flex flex-col'>
@@ -178,7 +209,9 @@ export default function LevelsSection(){
                                                                     <div className='cursor-pointer' onClick={openEditSublevelDrawer(sublevel)}>
                                                                         <EditOutlinedIcon/>
                                                                     </div>
-                                                                    <RemoveCircleOutlineOutlinedIcon/>
+                                                                    <div className='cursor-pointer' onClick={openDeleteSublevelModal(sublevel)}>
+                                                                        <RemoveCircleOutlineOutlinedIcon/>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         )
@@ -254,6 +287,25 @@ export default function LevelsSection(){
                     defaultValues={defaultValues}
                 />
             </Drawer>
+
+            {/* Delete modals */}
+            <Modal
+                title="Delete sublevel"
+                centered
+                open={deleteSublevelModal}
+                onOk={deactivateSublevel}
+                onCancel={closeDeleteSublevelModal}
+                footer={[
+                    <Button key="cancel" onClick={closeDeleteSublevelModal}>
+                        Cancel
+                    </Button>,
+                    <Button key="delete" danger disabled={loading} onClick={deactivateSublevel}>
+                        Delete sublevel
+                    </Button>
+                ]}
+            >
+                <p>Are you sure you want to dele the sublevel: {sublevelToDelete?.sublevel} </p>
+            </Modal>
         </div>
     )
 }

@@ -191,7 +191,7 @@ export default function MaterialsSection(){
                     </Button>
                 ]}
             >
-                <p>Are you sure you want to dele the material: {materialToDelete?.description} ({materialToDelete?.material_description}) </p>
+                <p>Are you sure you want to dele the material: {materialToDelete?.description} {materialToDelete?.material_description} </p>
             </Modal>
         </div>
     )
