@@ -23,16 +23,16 @@ export default function LevelsSection(){
     const [loading, setLoading] = useState(false)
     const [levelList, setLevelList]:any = useState(undefined)
     const [sublevelList, setSublevelList]:any = useState(undefined)
-    const [levelDrawerOpen, setLevelDrawerOpen] = useState(false)
-    const [sublevelDrawerOpen, setSublevelDrawerOpen] = useState(false)
-    const [createdLevel, setCreatedLevel]:any = useState(undefined)
-    const [createdSublevel, setCreatedSublevel]:any = useState(undefined)
     const [activeLevel, setActiveLevel]:any = useState(undefined)
     const [defaultValues, setDefaultValues]:any = useState(undefined)
+
+    /* <--------------- Level controlers ---------------> */
+
+    const [levelDrawerOpen, setLevelDrawerOpen] = useState(false) // Controls the 'New level' modal (true = open)
     const [editLevelDrawer, setEditLevelDrawer] = useState(false) // Controls the 'Edit level' modal (true = open)
-    const [editSublevelDrawer, setEditSublevelDrawer] = useState(false) // Controls the 'Edit sublevel' modal (true = open)
-    const [deleteSublevelModal, setDeleteSublevelModal] = useState(false) // Controls the 'Delete Sublevel' modal (true = open)
-    const [sublevelToDelete, setSublevelToDelete]:any = useState(undefined)
+    const [createdLevel, setCreatedLevel]:any = useState(undefined) // Triggers the useEffect to update the list
+    const [deleteLevelModal, setDeleteLevelModal] = useState(false) // Controls the 'Delete level' modal (true = open)
+    const [levelToDelete, setLevelToDelete]:any = useState(undefined) // Stores the level that is about to be deleted
 
     // Opens the 'New Level' modal
     const openLevelDrawer = () => {
@@ -56,6 +56,44 @@ export default function LevelsSection(){
         setEditLevelDrawer(false)
         setDefaultValues(undefined)
     }
+
+    // Opens the 'Delete level' modal
+    const openDeleteLevelModal = (level:any) => () => {
+        setLevelToDelete(level)
+        setDeleteLevelModal(true)
+    }
+
+    // Closes the 'Delete level' modal
+    const closeDeleteLevelModal = () => {
+        setLevelToDelete(undefined)
+        setDeleteLevelModal(false)
+    }
+
+    // Deactivate the selected level
+    const deactivateLevel = async() => {
+        setLoading(true)
+        const { data: updatedLevel, error: levelError } = await supabase.from('levels').update({
+            status: 'disabled'
+        })
+        .eq('level_id', levelToDelete.level_id)
+        .select()
+
+        setTimeout(() => {
+            setLoading(false)
+            setLevelToDelete(undefined)
+            setCreatedLevel(updatedLevel)
+            setDeleteLevelModal(false)
+        }, 1000);
+    }
+
+    /* <--------------- Level controlers ---------------> */
+
+    /* <--------------- Sublevel controlers ---------------> */
+    const [sublevelDrawerOpen, setSublevelDrawerOpen] = useState(false) // Controls the 'New sublevel' modal (true = open)
+    const [editSublevelDrawer, setEditSublevelDrawer] = useState(false) // Controls the 'Edit sublevel' modal (true = open)
+    const [createdSublevel, setCreatedSublevel]:any = useState(undefined) // Triggers the useEffect to update the list
+    const [deleteSublevelModal, setDeleteSublevelModal] = useState(false) // Controls the 'Delete Sublevel' modal (true = open)
+    const [sublevelToDelete, setSublevelToDelete]:any = useState(undefined)
 
     // Opens the 'New sublevel' modal
     const openSublevelDrawer = (levelId:any) => () => {
@@ -110,6 +148,8 @@ export default function LevelsSection(){
             setDeleteSublevelModal(false)
         }, 1000);
     }
+
+    /* <--------------- Sublevel controlers ---------------> */
 
     async function getLevels(){
         const { data: levels, error: levelsError } = await supabase.from('levels').select()
@@ -177,62 +217,69 @@ export default function LevelsSection(){
 
                     <div className='levels-list flex flex-col gap-2'>
                     {
-                        levelList?.map((level:any)=>(
-                            <Accordion key={level.level_id} className='!rounded-xl shadow-none border border-gray-300 px-0'>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel-content"
-                                    id="panel-header"
-                                    className='px-6'
-                                >
-                                    <div className='w-full flex rounded-lg'>
-                                        <div className='w-1/5 font-semibold'>{level.level}</div>
-                                        <div className='flex-1'>{level.description}</div>
-                                        <div className='w-1/4'>{level.area_level}</div>
-                                    </div>
-                                </AccordionSummary>
-                                <AccordionDetails className='border-t border-gray-300'>
-                                    {
-                                        sublevelList !== undefined &&
-                                        <div className='w-full flex flex-col gap-2 pt-3'>
-                                            <div>Sublevels</div>
+                        levelList?.map((level:any)=>{
+                            if(level.status !== 'disabled'){
+                                return(
+                                    <Accordion key={level.level_id} className='!rounded-xl shadow-none border border-gray-300 px-0'>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel-content"
+                                            id="panel-header"
+                                            className='px-6'
+                                        >
+                                            <div className='w-full flex rounded-lg'>
+                                                <div className='w-1/5 font-semibold'>{level.level}</div>
+                                                <div className='flex-1'>{level.description}</div>
+                                                <div className='w-1/4'>{level.area_level}</div>
+                                            </div>
+                                        </AccordionSummary>
+                                        <AccordionDetails className='border-t border-gray-300'>
                                             {
-                                                sublevelList.map((sublevel:any)=>{
-                                                    if((sublevel.level_id === level.level_id) && (sublevel.status !== 'disabled')){
-                                                        return(
-                                                            <div key={sublevel.sublevel_id} className='w-full px-4 py-3 rounded-lg border border-gray-300 flex items-center gap-5'>
-                                                                <div className='flex-1 flex flex-col'>
-                                                                    <div className='font-semibold'>{sublevel.sublevel}</div>
-                                                                    <div className='text-xs'>{sublevel.description}</div>
-                                                                </div>
-                                                                <div className='flex items-center gap-2'>
-                                                                    <div className='cursor-pointer' onClick={openEditSublevelDrawer(sublevel)}>
-                                                                        <EditOutlinedIcon/>
+                                                sublevelList !== undefined &&
+                                                <div className='w-full flex flex-col gap-2 pt-3'>
+                                                    <div>Sublevels</div>
+                                                    {
+                                                        sublevelList.map((sublevel:any)=>{
+                                                            if((sublevel.level_id === level.level_id) && (sublevel.status !== 'disabled')){
+                                                                return(
+                                                                    <div key={sublevel.sublevel_id} className='w-full px-4 py-3 rounded-lg border border-gray-300 flex items-center gap-5'>
+                                                                        <div className='flex-1 flex flex-col'>
+                                                                            <div className='font-semibold'>{sublevel.sublevel}</div>
+                                                                            <div className='text-xs'>{sublevel.description}</div>
+                                                                        </div>
+                                                                        <div className='flex items-center gap-2'>
+                                                                            <div className='cursor-pointer' onClick={openEditSublevelDrawer(sublevel)}>
+                                                                                <EditOutlinedIcon/>
+                                                                            </div>
+                                                                            <div className='cursor-pointer' onClick={openDeleteSublevelModal(sublevel)}>
+                                                                                <RemoveCircleOutlineOutlinedIcon/>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className='cursor-pointer' onClick={openDeleteSublevelModal(sublevel)}>
-                                                                        <RemoveCircleOutlineOutlinedIcon/>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )
+                                                                )
+                                                            }
+                                                        })
                                                     }
-                                                })
+                                                </div>
+                                                
                                             }
-                                        </div>
-                                        
-                                    }
-                                </AccordionDetails>
-                                <AccordionActions className='p-4'>
-                                    <Button onClick={openEditLevelDrawer(level)}>Edit level</Button>
-                                    <Button 
-                                        type="primary"
-                                        onClick={openSublevelDrawer(level.level_id)}
-                                    >
-                                        New sublevel
-                                    </Button>
-                                </AccordionActions>
-                            </Accordion>
-                        ))
+                                        </AccordionDetails>
+                                        <AccordionActions className='p-4'>
+                                            <Button key="delete" danger disabled={loading} onClick={openDeleteLevelModal(level)}>
+                                                Delete level
+                                            </Button>
+                                            <Button onClick={openEditLevelDrawer(level)}>Edit level</Button>
+                                            <Button 
+                                                type="primary"
+                                                onClick={openSublevelDrawer(level.level_id)}
+                                            >
+                                                New sublevel
+                                            </Button>
+                                        </AccordionActions>
+                                    </Accordion>
+                                )
+                            }
+                        })
                     }
                     </div>
                 </div>
@@ -289,6 +336,23 @@ export default function LevelsSection(){
             </Drawer>
 
             {/* Delete modals */}
+            <Modal
+                title="Delete level"
+                centered
+                open={deleteLevelModal}
+                onOk={deactivateLevel}
+                onCancel={closeDeleteLevelModal}
+                footer={[
+                    <Button key="cancel" onClick={closeDeleteLevelModal}>
+                        Cancel
+                    </Button>,
+                    <Button key="delete" danger disabled={loading} onClick={deactivateLevel}>
+                        Delete level
+                    </Button>
+                ]}
+            >
+                <p>Are you sure you want to dele the level: {levelToDelete?.level}?</p>
+            </Modal>
             <Modal
                 title="Delete sublevel"
                 centered
