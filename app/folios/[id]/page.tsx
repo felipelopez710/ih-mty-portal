@@ -30,8 +30,8 @@ export default function FolioDetail(){
     async function getFolioDetail(folioId : any) {
 
         // Get the folio general information
-        const { data: folio, error: folioError } = await supabase.from('folio_information_view').select().eq('folio_id', folioId)
-        //console.log('Folios:', folio)
+        const { data: folio, error: folioError } = await supabase.from('folios').select('*, coordinators(coordinator_id, full_name), groups(group_id, group_code), levels(level_id, level), sublevels(sublevel_id, sublevel), materials(material_id, material_description)').eq('folio_id', folioId)
+        console.log('Folios:', folio)
         folio !== null && folio.length > 0 ? setActiveFolio(folio[0]) : setActiveFolio(undefined)
         
         // Get the frequency lines from this folio
