@@ -7,7 +7,7 @@ export default function FolioInfo({ folioInformation } : any){
         <div className="w-full bg-white rounded-xl p-5 shadow-md flex flex-col gap-6">
             <div className="section-header flex justify-between items-center">
                 <div className="text-base font-semibold">Folio Detail</div>
-                <Link href={`/clients/edit/1`}>
+                <Link href={`/folios/edit/${folioInformation.folio_id}`}>
                     <div className="flex gap-1 items-center text-ih-blue">
                         <div className='font-medium'>
                             Edit
