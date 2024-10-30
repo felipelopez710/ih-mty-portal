@@ -197,6 +197,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             start_date: e.start_date,
             end_date: lastClass.classDate,
             contracted_hours: courseHours,
+            scheduled_hours: cumulativeHours,
             amount_to_invoice: e.amount_to_invoice,
             coordinator_id: e.coordinator,
             comments: e.general_comments,
@@ -710,7 +711,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                                 label="Start time - End time"
                                                 name={[name, 'start_date_end_date']}
                                             >
-                                                <TimePicker.RangePicker />
+                                                <TimePicker.RangePicker needConfirm={false} />
                                             </Form.Item>
 
                                             <Form.Item

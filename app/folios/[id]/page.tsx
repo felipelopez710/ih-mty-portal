@@ -123,7 +123,6 @@ export default function FolioDetail(){
                                         {`Folio ${activeFolio.folio_id}`}
                                     </div> 
                                     <Button 
-                                        type="primary" 
                                         icon={<ExpandMoreOutlinedIcon />}
                                         className="export-button"
                                         iconPosition="end"
