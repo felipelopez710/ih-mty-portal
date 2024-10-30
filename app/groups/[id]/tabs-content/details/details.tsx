@@ -45,12 +45,14 @@ export default function DetailsTab({groupInformation, groupStudents, folios}:any
                         Group Detail 
                     </div> 
 
-                    <div className="flex gap-1 items-center text-ih-blue">
-                        <div className='font-medium'>
-                            Edit
+                    <Link href={`/groups/edit/${groupInformation.group_id}`}>
+                        <div className="flex gap-1 items-center text-ih-blue">
+                            <div className='font-medium'>
+                                Edit
+                            </div>
+                            <ModeEditOutlinedIcon fontSize="small" />
                         </div>
-                        <ModeEditOutlinedIcon fontSize="small" />
-                    </div>
+                    </Link>
                 </div>
 
                 <div className="information-container w-full flex gap-5">
