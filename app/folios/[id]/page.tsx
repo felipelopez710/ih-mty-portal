@@ -140,7 +140,7 @@ export default function FolioDetail(){
                                 
                                 {activeTab == '1' ? <DetailView folioInformation={activeFolio} folioFrequency={folioFrequency} /> : ''}
 
-                                {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
+                                {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab activeFolio={activeFolio} folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
 
                                 {activeTab == '3' ? <Attendance attendance={attendance} listOfClasses={listOfClasses} /> : ''}
                                 
