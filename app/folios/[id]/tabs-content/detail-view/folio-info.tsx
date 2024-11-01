@@ -7,7 +7,7 @@ export default function FolioInfo({ folioInformation } : any){
         <div className="w-full bg-white rounded-xl p-5 shadow-md flex flex-col gap-6">
             <div className="section-header flex justify-between items-center">
                 <div className="text-base font-semibold">Folio Detail</div>
-                <Link href={`/clients/edit/1`}>
+                <Link href={`/folios/edit/${folioInformation.folio_id}`}>
                     <div className="flex gap-1 items-center text-ih-blue">
                         <div className='font-medium'>
                             Edit
@@ -24,7 +24,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.group_code !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Group code</div>
-                        <div className='w-2/3'>{folioInformation.group_code}</div>
+                        <div className='w-2/3'>{folioInformation?.groups.group_code}</div>
                     </div>
                     :
                     ''
@@ -68,7 +68,18 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.level_description !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Level</div>
-                        <div className='w-2/3'>{folioInformation.level_description}</div>
+                        <div className='w-2/3'>{folioInformation?.levels.level}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* Sublevel */}
+                {
+                    folioInformation.level_description !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Sublevel</div>
+                        <div className='w-2/3'>{folioInformation?.sublevels.sublevel}</div>
                     </div>
                     :
                     ''
@@ -79,7 +90,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.material_description !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Material</div>
-                        <div className='w-2/3'>{folioInformation.material_description}</div>
+                        <div className='w-2/3'>{folioInformation?.materials.material_description}</div>
                     </div>
                     :
                     ''
@@ -91,6 +102,17 @@ export default function FolioInfo({ folioInformation } : any){
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Contracted hours</div>
                         <div className='w-2/3'>{folioInformation.contracted_hours}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* Scheduled hours */}
+                {
+                    folioInformation.scheduled_hours !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Scheduled hours</div>
+                        <div className='w-2/3'>{folioInformation.scheduled_hours}</div>
                     </div>
                     :
                     ''
@@ -134,7 +156,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.coordinator !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Coordinator</div>
-                        <div className='w-2/3'>{folioInformation.coordinator}</div>
+                        <div className='w-2/3'>{folioInformation?.coordinators.full_name}</div>
                     </div>
                     :
                     ''

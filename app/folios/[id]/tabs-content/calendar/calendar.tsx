@@ -99,7 +99,7 @@ const classesList = [
     },
 ]
 
-export default function CalendarTab({ folioFrequency, listOfClasses }:any){
+export default function CalendarTab({ activeFolio, folioFrequency, listOfClasses }:any){
 
     const [activeView, setActiveView] = useState("List")
 
@@ -130,9 +130,9 @@ export default function CalendarTab({ folioFrequency, listOfClasses }:any){
 
                         {
                             activeView == 'List'? 
-                            <ListView classesList={classesList} listOfClasses={listOfClasses} />
+                            <ListView activeFolio={activeFolio} classesList={classesList} listOfClasses={listOfClasses} />
                             :
-                            <CalendarView listOfClasses={listOfClasses} />
+                            <CalendarView listOfClasses={listOfClasses} activeFolio={activeFolio}/>
                         }
                         
                     </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from "@/utils/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation'
 import { Button, Form, Input, Select, DatePicker, Spin } from "antd";
 
@@ -11,7 +11,7 @@ type FieldType = {
     area_level?: string;
 };
 
-export default function NewLevelForm({setLevelDrawerOpen, setCreatedLevel}:any){
+export default function EditLevelForm({setEditLevelDrawer, setCreatedLevel, defaultValues}:any){
     const supabase = createClient()
     const router = useRouter();
     const [form] = Form.useForm()
@@ -21,21 +21,29 @@ export default function NewLevelForm({setLevelDrawerOpen, setCreatedLevel}:any){
         setLoading(true)
         console.log('Sent data:', e);
 
-        const { data: newLevel, error: levelError } = await supabase.from('levels').insert({
+        const { data: updatedLevel, error: levelError } = await supabase.from('levels').update({
             level: e.level,
             description: e.description,
             area_level: e.area_level,
         })
+        .eq('level_id', defaultValues.level_id)
         .select()
 
         setTimeout(() => {
             form.resetFields()
-            setLevelDrawerOpen(false)
-            setCreatedLevel(newLevel)
+            setEditLevelDrawer(false)
+            setCreatedLevel(updatedLevel)
             setLoading(false)
         }, 1000);
     };
 
+    useEffect(() => {
+        if(defaultValues){
+            form.setFieldValue('level', defaultValues.level)
+            form.setFieldValue('description', defaultValues.description)
+        }
+    }, [defaultValues])
+    
     return(
         <div className="">
             <Form 
@@ -76,7 +84,7 @@ export default function NewLevelForm({setLevelDrawerOpen, setCreatedLevel}:any){
                 </div>
                 
                 <div className='action-buttons flex gap-2 items-center justify-end py-5 border-t border-gray-300'>
-                    <Button onClick={()=>setLevelDrawerOpen(false)}>Cancel</Button>
+                    <Button onClick={()=>setEditLevelDrawer(false)}>Cancel</Button>
                     <Button 
                         type="primary"
                         htmlType="submit"

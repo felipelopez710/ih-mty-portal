@@ -30,8 +30,8 @@ export default function FolioDetail(){
     async function getFolioDetail(folioId : any) {
 
         // Get the folio general information
-        const { data: folio, error: folioError } = await supabase.from('folio_information_view').select().eq('folio_id', folioId)
-        //console.log('Folios:', folio)
+        const { data: folio, error: folioError } = await supabase.from('folios').select('*, coordinators(coordinator_id, full_name), groups(group_id, group_code), levels(level_id, level), sublevels(sublevel_id, sublevel), materials(material_id, material_description)').eq('folio_id', folioId)
+        // console.log('Folios:', folio)
         folio !== null && folio.length > 0 ? setActiveFolio(folio[0]) : setActiveFolio(undefined)
         
         // Get the frequency lines from this folio
@@ -40,8 +40,8 @@ export default function FolioDetail(){
         frequencyLines !== null && frequencyLines.length > 0 ? setFolioFrequency(frequencyLines) : setFolioFrequency(undefined)
 
         // Get the list of classes form this folio
-        const { data: classes, error: classesError } = await supabase.from('classes_view').select().eq('folio_id', folioId)
-        //console.log('Classes: ', classes)
+        const { data: classes, error: classesError } = await supabase.from('classes').select('*, teachers(teacher_id, full_name)').eq('folio_id', folioId)
+        console.log('Classes: ', classes)
         classes !== null && classes.length > 0 ? setListOfClasses(classes) : setListOfClasses(undefined)
 
         // Get the attendance record from this folio
@@ -123,7 +123,6 @@ export default function FolioDetail(){
                                         {`Folio ${activeFolio.folio_id}`}
                                     </div> 
                                     <Button 
-                                        type="primary" 
                                         icon={<ExpandMoreOutlinedIcon />}
                                         className="export-button"
                                         iconPosition="end"
@@ -141,7 +140,7 @@ export default function FolioDetail(){
                                 
                                 {activeTab == '1' ? <DetailView folioInformation={activeFolio} folioFrequency={folioFrequency} /> : ''}
 
-                                {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
+                                {activeTab == '2' && listOfClasses!== undefined ? <CalendarTab activeFolio={activeFolio} folioFrequency={folioFrequency}  listOfClasses={listOfClasses} /> : ''}
 
                                 {activeTab == '3' ? <Attendance attendance={attendance} listOfClasses={listOfClasses} /> : ''}
                                 
