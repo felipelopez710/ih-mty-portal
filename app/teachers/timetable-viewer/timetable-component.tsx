@@ -1,3 +1,5 @@
+'use client'
+
 import dayjs from "dayjs"
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
