@@ -21,15 +21,17 @@ export default async function Folios() {
         return redirect("/login");
     }
 
-    const { data: folios } = await supabase.from('folio_details_view').select()
+    const { data: folios } = await supabase.from('folios').select('*, groups(group_id, group_code), clients(client_id, client_name)')
+
+    // console.log('Folios: ', folios)
 
     let formatedFolios:any = []
 
     folios?.map((folio:any)=>{
         formatedFolios.push({
             folio_id: folio.folio_id,
-            group_code: folio.group_code,
-            client_name: folio.client_name,
+            group_code: folio.group_id !== null ? folio.groups.group_code : 'No group asigned',
+            client_name: folio.client_id !== null ? folio.clients.client_name : '-',
             client_location: folio.client_location,
             start_date: dayjs(folio.start_date).format('MMMM D, YYYY'),
             end_date: dayjs(folio.end_date).format('MMMM D, YYYY'),

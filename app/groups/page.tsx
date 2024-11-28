@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { redirect } from "next/navigation";
 
 import Link from 'next/link';
 
@@ -46,7 +47,34 @@ const groups = [
 export default async function Groups() {
     const supabase = createClient()
 
-    const { data: groups } = await supabase.from('group_client_view').select()
+    const {
+        data: { user },
+      } = await supabase.auth.getUser();
+    
+      if (!user) {
+        return redirect("/login");
+    }
+
+    const { data: groups } = await supabase.from('groups').select('*, clients(client_id, client_name)')
+
+    // console.log(groups)
+
+    let formatedGroupList:any = []
+
+    groups?.map((group:any)=>{
+        formatedGroupList.push({
+            group_id: group.group_id,
+            created_at: group.created_at,
+            status: group.status,
+            group_code: group.group_code,
+            members: group.members,
+            folios_couunt: group.folios_count,
+            client_id: group.client_id,
+            client_name: group.client_id !== null ? group.clients.client_name : ''
+        })
+    })
+
+    console.log(formatedGroupList)
 
     return(
         <main className='w-full'>

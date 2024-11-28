@@ -1,4 +1,5 @@
 'use client'
+import React from 'react';
 
 import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
@@ -8,12 +9,18 @@ import Timetable from './timetable-component';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Select, Space } from 'antd';
 
+import TeacherSchedule from '@/components/pdfDocs/teacherSchedule';
+import { usePDF, PDFDownloadLink, Document, Page, Text } from '@react-pdf/renderer';
+
 export default function TimeableViewer() {
     const supabase = createClient();
+
+    const [instance, updateInstance] = usePDF({ document: <TeacherSchedule /> })
 
     const [frequencyLoading, setFrequencyLoading] = useState(false)
     const [teachersList, setTeachersList]:any = useState([])
     const [frequencyLines, setFrequencyLines]:any = useState(undefined)
+    const [activeTeacher, setActiveTeacher]:any = useState(undefined)
 
     async function getTeachers(){
         const { data: teachers, error: teachersError } = await supabase.from('teachers').select('teacher_id,full_name')
@@ -46,6 +53,8 @@ export default function TimeableViewer() {
         setFrequencyLoading(true)
         setFrequencyLines(undefined)
         console.log(`Selected: ${value}`);
+
+        setActiveTeacher(value)
         
         const { data: classes, error: classesError } = await supabase.from('frequency_lines').select('*, folios(start_date, end_date, client_name, groups(group_code), levels(level))').eq('teacher_id', value) 
         if(classes){
@@ -90,7 +99,16 @@ export default function TimeableViewer() {
                                 />
                             </div>
 
-                            <div className=''>Export</div>
+                            <div className=''>
+                                {
+                                    activeTeacher !== undefined &&
+                                    <PDFDownloadLink document={<TeacherSchedule activeTeacher={activeTeacher} />} fileName="reporte.pdf">
+                                        {
+                                            instance.loading ? 'Loading' : 'Export'
+                                        }
+                                    </PDFDownloadLink>
+                                }
+                            </div>
                         </div>
 
                         <div className='timetable-table w-full flex flex-col gap-2 items-center'>

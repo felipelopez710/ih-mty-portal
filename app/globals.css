@@ -88,3 +88,5 @@ body {
 .css-1086bdv-MuiPaper-root-MuiAccordion-root::before{
   background-color: transparent;
 }
+
+@layer base { img {display: initial;} }

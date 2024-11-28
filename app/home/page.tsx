@@ -34,55 +34,65 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 const foliosProgress = [
     {
+        id: 1,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 90,
     },
     {
+        id: 2,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 75,
     }
     ,
     {
+        id: 3,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 30,
     }
     ,
     {
+        id: 4,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 55,
     }
     ,
     {
+        id: 5,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 40,
     },
     {
+        id: 6,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 20,
     }
     ,
     {
+        id: 7,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 20,
     },
     {
+        id: 8,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 15,
     },
     {
+        id: 9,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 20,
     },
     {
+        id: 10,
         folio: 'Folio 1234',
         level: '102 PRE-ELEMENTARY',
         progress: 5,
@@ -195,7 +205,7 @@ export default function Home() {
                                         {
                                             foliosProgress.map((folio) => {
                                                 return(
-                                                    <div className="folio-card w-full flex items-center gap-5 px-5 py-4 border-b border-gray-200">
+                                                    <div key={folio.id} className="folio-card w-full flex items-center gap-5 px-5 py-4 border-b border-gray-200">
                                                         <div className="flex-1 flex flex-col">
                                                             <span className="font-semibold">{folio.folio}</span>
                                                             <span className="text-xs text-gray-400">{folio.level}</span>
