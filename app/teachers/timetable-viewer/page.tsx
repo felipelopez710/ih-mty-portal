@@ -15,9 +15,31 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Select, Space } from 'antd';
 
 import TeacherSchedule from '@/components/pdfDocs/teacherSchedule';
-const PDFDownloadLink = dynamic(() => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink), { ssr: false });
+/* const PDFDownloadLink = dynamic(() => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink), { ssr: false });
 const Document = dynamic(() => import('@react-pdf/renderer').then(mod => mod.Document), { ssr: false });
-import { usePDF, Page, Text } from '@react-pdf/renderer';
+import { usePDF, Page, Text } from '@react-pdf/renderer'; */
+
+const PDFDownloadLink = dynamic(
+    () => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink),
+    { ssr: false }
+)
+
+const Document = dynamic(
+    () => import('@react-pdf/renderer').then(mod => mod.Document),
+    { ssr: false }
+)
+
+const Page = dynamic(
+    () => import('@react-pdf/renderer').then(mod => mod.Page),
+    { ssr: false }
+)
+
+const Text = dynamic(
+    () => import('@react-pdf/renderer').then(mod => mod.Text),
+    { ssr: false }
+)
+
+import { usePDF } from '@react-pdf/renderer';
 
 export default function TimeableViewer() {
     const supabase = createClient();
