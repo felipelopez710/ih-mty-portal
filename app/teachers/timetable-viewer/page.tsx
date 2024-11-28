@@ -1,4 +1,9 @@
 'use client'
+
+import dynamic from 'next/dynamic';
+
+// Luego usa estos componentes de manera normal
+
 import React from 'react';
 
 import { createClient } from '@/utils/supabase/client';
@@ -10,7 +15,9 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Select, Space } from 'antd';
 
 import TeacherSchedule from '@/components/pdfDocs/teacherSchedule';
-import { usePDF, PDFDownloadLink, Document, Page, Text } from '@react-pdf/renderer';
+const PDFDownloadLink = dynamic(() => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink), { ssr: false });
+const Document = dynamic(() => import('@react-pdf/renderer').then(mod => mod.Document), { ssr: false });
+import { usePDF, Page, Text } from '@react-pdf/renderer';
 
 export default function TimeableViewer() {
     const supabase = createClient();
