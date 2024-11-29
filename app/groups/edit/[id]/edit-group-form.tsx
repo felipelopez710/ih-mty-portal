@@ -23,19 +23,74 @@ export default function EditGroupForm({groupId}:any){
     const [loading, setLoading] = useState(false)
     
     const [activeGroup, setActiveGroup]:any = useState(undefined)
-    const [studentOptions, setStudentOptions]:any = useState(undefined) // Stores the list of available students to select
+    const [studentOptions, setStudentOptions]:any = useState(null) // Stores the list of available students to select
     const [clientOptions, setClientOptions]:any = useState(undefined) // Stores the list of available clients to select
     const [defaultClient, setDefaultClient]:any = useState(undefined)
 
-    // Gets the initial options for the client and students selector
+    // Gets the options for the students selector
     async function getInitialOptions(groupId:any) { 
 
         let client_id:any = null
         let client_name:any = null
 
         // Get the active group information
-        const { data: groupInfo, error: groupError } = await supabase.from('groups').select().eq('group_id', groupId)
-        // Get client list
+        const { data: groupInfo, error: groupError } = await supabase.from('groups').select('*, clients(client_id, client_name)').eq('group_id', groupId)
+
+        console.log('Active group: ', groupInfo)
+
+        if(groupInfo){
+            // Set the default group code
+            form.setFieldValue('group_code', groupInfo[0].group_code)
+            form.setFieldValue('client_id', groupInfo[0].clients?.client_name)
+
+            // Get the list of students for the client
+            if(groupInfo[0].client_id !== null && groupInfo[0].client_id == 1){
+                const { data, error } = await supabase
+                .from('students')
+                .select('*, clients(client_id, client_name)')
+
+                if(error){
+                    console.log('Error: ', error)
+                }
+
+                let options:any = []
+
+                data?.map((student:any) =>{
+                    options.push({
+                        label: `${student.full_name} - ${student.client_id !== null ? student.clients.client_name : 'No asigned client' }`,
+                        value: student.student_id.toString()
+                    })
+                })
+
+                options.sort((a:any, b:any) => a.label.localeCompare(b.label));
+
+                setStudentOptions(options)
+            }else{
+                const { data, error } = await supabase
+                .from('students')
+                .select('*, clients(client_id, client_name)')
+                .in('client_id', [groupInfo[0].client_id, 1])
+
+                if(error){
+                    console.log('Error: ', error)
+                }
+
+                console.log("Student list: ", data)
+
+                let options:any = []
+
+                data?.map((student:any) =>{
+                    options.push({
+                        label: `${student.full_name} - ${student.client_id !== null ? student.clients.client_name : 'No asigned client' }`,
+                        value: student.student_id.toString()
+                    })
+                })
+
+                setStudentOptions(options)
+            }
+        }
+
+        /* // Get client list
         const { data: clients, error: clientsError } = await supabase.from('clients').select()
         
         if(groupInfo){
@@ -79,7 +134,7 @@ export default function EditGroupForm({groupId}:any){
             form.setFieldValue('group_code', groupInfo[0].group_code)
         }
 
-        setDefaultClient(client_name)
+        setDefaultClient(client_name) */
 
     }
 
@@ -146,12 +201,12 @@ export default function EditGroupForm({groupId}:any){
 
                             {/* Client field */}
                             <Form.Item<FieldType> 
-                                className="flex-1" 
+                                className="flex-1 max-w-[50%]" 
                                 label="Client"
                                 name="client_id"
                                 rules={[{ message: 'Select a client' }]}
                             >
-                                <Select>
+                                <Select disabled>
                                     {clientOptions?.map((client:any) =>(
                                         <Select.Option value={client.client_name.toString()} key={client.client_id}>
                                             {client.client_name}

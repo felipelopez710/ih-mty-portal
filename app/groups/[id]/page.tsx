@@ -45,10 +45,11 @@ export default function GroupDetail(){
         group !== null && group.length > 0 ? setActiveGroup(group[0]) : setActiveGroup(undefined)
 
         // Get the list of students from this group
-        const { data: studentList, error: studentsError } = await supabase.from('student_per_group').select('*, students(student_id, full_name, email)').eq('group_id', group_id)
+        const { data: studentList, error: studentsError } = await supabase.from('student_per_group').select('*, students(student_id, full_name, email, clients(client_id, client_name))').eq('group_id', group_id)
         console.log('Students in this group: ', studentList)
         if (studentList){
             setGroupStudents(studentList)
+            console.log('Registros:', studentList)
         }
 
         // Get the lits of folios from this group
@@ -113,7 +114,7 @@ export default function GroupDetail(){
 
                             <div className="bottom-section px-8 h-full">
                                 
-                                { activeTab === '1' && <DetailsTab groupInformation={activeGroup} groupStudents={groupStudents} folios={foliosList} /> }
+                                { activeTab === '1' && <DetailsTab groupInformation={activeGroup} groupStudents={groupStudents} setGroupStudents={setGroupStudents} folios={foliosList} /> }
 
                                 { activeTab === '2' && <FoliosTab folios={foliosList} /> }
 
