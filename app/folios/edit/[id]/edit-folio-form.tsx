@@ -78,7 +78,7 @@ export default function EditFolioForm({initialValues}:any){
         const { data: updatedFolio, error: folioError } = await supabase.from('folios').update({
             client_location: e.client_location,
             modality: e.modality,
-            material_id: e.material,
+            material_id: Number.isInteger(e.material) ? e.material : null,
             start_date: e.start_date,
             contracted_hours: e.contracted_hours,
             amount_to_invoice: e.amount_to_invoice,
@@ -117,13 +117,13 @@ export default function EditFolioForm({initialValues}:any){
         form.setFieldValue('client', initialValues.client_name)
         form.setFieldValue('client_location', initialValues.client_location)
         form.setFieldValue('modality', initialValues.modality)
-        form.setFieldValue('level', initialValues.levels.level)
-        form.setFieldValue('sublevel', initialValues.sublevels.sublevel)
-        form.setFieldValue('material', initialValues.material_id.toString())
+        form.setFieldValue('level', initialValues.levels?.level ?? initialValues.level_ref)
+        form.setFieldValue('sublevel', initialValues.sublevels?.sublevel ?? "")
+        form.setFieldValue('material', initialValues.material_id?.toString() ?? initialValues.material_ref)
         form.setFieldValue('start_date', dayjs(initialValues.start_date))
         form.setFieldValue('contracted_hours', initialValues.contracted_hours)
         form.setFieldValue('amount_to_invoice', initialValues.amount_to_invoice)
-        form.setFieldValue('coordinator', initialValues.coordinator_id.toString())
+        form.setFieldValue('coordinator', initialValues.coordinator_id?.toString())
         form.setFieldValue('general_comments', initialValues.comments)
         form.setFieldValue('academic_comments', initialValues.academic_comments)
         form.setFieldValue('material_covered', initialValues.material_covered)
@@ -304,7 +304,7 @@ export default function EditFolioForm({initialValues}:any){
                                         className="flex-1" 
                                         label="Coordinator"
                                         name="coordinator"
-                                        rules={[{ required: true, message: 'Please select the level' }]}
+                                        rules={[{ required: false, message: 'Please select the level' }]}
                                     >
                                         <Select>
                                             {coordinatorOptions?.map((coordinator:any)=>{
