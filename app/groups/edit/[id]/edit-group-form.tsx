@@ -31,17 +31,26 @@ export default function EditGroupForm({groupId}:any){
     async function getInitialOptions(groupId:any) { 
 
         let client_id:any = null
+        let client_name:any = null
 
         // Get the active group information
         const { data: groupInfo, error: groupError } = await supabase.from('groups').select().eq('group_id', groupId)
+        // Get client list
+        const { data: clients, error: clientsError } = await supabase.from('clients').select()
+        
         if(groupInfo){
-            setActiveGroup(groupInfo[0])
+
+            // Getting and adding client name
+            client_name = clients?.find(client => client.client_id === groupInfo[0].client_id).client_name
+            groupInfo[0] = {...groupInfo[0], client_name}
+            
+            setActiveGroup({...groupInfo[0]})
+
             console.log('Active group information: ', groupInfo[0])
             client_id = groupInfo[0].client_id
         }
         
-        // Get client list
-        const { data: clients, error: clientsError } = await supabase.from('clients').select()
+        
         if(clients){
             console.log('Fetched clients: ', clients)
             setClientOptions(clients)
@@ -70,11 +79,12 @@ export default function EditGroupForm({groupId}:any){
             form.setFieldValue('group_code', groupInfo[0].group_code)
         }
 
-        setDefaultClient(client_id)
+        setDefaultClient(client_name)
 
     }
 
     async function onFinish(e:FieldType){
+        // Falta desarrollar xD
         console.log('Sent data: ', e)
     }
 
@@ -143,7 +153,7 @@ export default function EditGroupForm({groupId}:any){
                             >
                                 <Select>
                                     {clientOptions?.map((client:any) =>(
-                                        <Select.Option value={client.client_id.toString()} key={client.client_id}>
+                                        <Select.Option value={client.client_name.toString()} key={client.client_id}>
                                             {client.client_name}
                                         </Select.Option>
                                     ))}

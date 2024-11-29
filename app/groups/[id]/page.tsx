@@ -40,7 +40,7 @@ export default function GroupDetail(){
 
     async function getGroupDetail(group_id:any){
         // Get the group general information
-        const { data: group, error: groupError } = await supabase.from('group_client_view').select().eq('group_id', group_id)
+        const { data: group, error: groupError } = await supabase.from('groups').select().eq('group_id', group_id)
         console.log('Group information: ', group)
         group !== null && group.length > 0 ? setActiveGroup(group[0]) : setActiveGroup(undefined)
 
