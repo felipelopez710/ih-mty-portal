@@ -87,10 +87,61 @@ export default function GroupForm({ clients } : any){
         
         setStudentOptions(null)
 
-        const { data, error } = await supabase
+        if(value == 1){
+            const { data, error } = await supabase
+            .from('students')
+            .select('*, clients(client_id, client_name)')
+
+            if(error){
+                console.log('Error: ', error)
+            }
+
+            console.log("Student list: ", data)
+
+            let options:any = []
+
+            data?.map((student:any) =>{
+                options.push({
+                    label: `${student.full_name} - ${student.client_id !== null ? student.clients.client_name : 'No asigned client' }`,
+                    value: student.student_id.toString()
+                })
+            })
+
+            options.sort((a:any, b:any) => a.label.localeCompare(b.label));
+
+            setStudentOptions(options)
+        }else{
+            const { data, error } = await supabase
+            .from('students')
+            .select('*, clients(client_id, client_name)')
+            .in('client_id', [parseInt(value), 1])
+
+            if(error){
+                console.log('Error: ', error)
+            }
+
+            console.log("Student list: ", data)
+
+            let options:any = []
+
+            data?.map((student:any) =>{
+                options.push({
+                    label: `${student.full_name} - ${student.client_id !== null ? student.clients.client_name : 'No asigned client' }`,
+                    value: student.student_id.toString()
+                })
+            })
+
+            setStudentOptions(options)
+        }
+
+        /* const { data, error } = await supabase
         .from('students')
-        .select()
-        .eq('client_id', parseInt(value))
+        .select('*, clients(client_id, client_name)')
+        .in('client_id', [parseInt(value), 1])
+
+        if(error){
+            console.log('Error: ', error)
+        }
 
         console.log("Student list: ", data)
 
@@ -98,12 +149,12 @@ export default function GroupForm({ clients } : any){
 
         data?.map((student:any) =>{
             options.push({
-                label: student.full_name,
+                label: `${student.full_name} - ${student.client_id !== null ? student.clients.client_name : 'No asigned client' }`,
                 value: student.student_id.toString()
             })
         })
 
-        setStudentOptions(options)
+        setStudentOptions(options) */
     }
 
     return(
