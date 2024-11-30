@@ -40,21 +40,20 @@ export default function GroupDetail(){
 
     async function getGroupDetail(group_id:any){
         // Get the group general information
-        const { data: group, error: groupError } = await supabase.from('groups').select().eq('group_id', group_id)
-        console.log('Group information: ', group)
+        const { data: group, error: groupError } = await supabase.from('groups').select('*, clients(client_id, client_name)').eq('group_id', group_id)
+        // console.log('Group information: ', group)
         group !== null && group.length > 0 ? setActiveGroup(group[0]) : setActiveGroup(undefined)
 
         // Get the list of students from this group
-        const { data: studentList, error: studentsError } = await supabase.from('student_per_group').select('*, students(student_id, full_name, email, clients(client_id, client_name))').eq('group_id', group_id)
-        console.log('Students in this group: ', studentList)
+        const { data: studentList, error: studentsError } = await supabase.from('student_per_group').select('*, students(student_id, full_name, email, clients(client_id, client_name))').eq('group_id', group_id).eq('status', 'active')
+        // console.log('Students in this group: ', studentList)
         if (studentList){
             setGroupStudents(studentList)
-            console.log('Registros:', studentList)
         }
 
         // Get the lits of folios from this group
         const { data: foliosList, error: foliosError } = await supabase.from('folio_details_view').select().eq('group_id', group_id)
-        console.log('Folios from this group: ', foliosList)
+        // console.log('Folios from this group: ', foliosList)
         if(foliosList){
             setFoliosList(foliosList)
         }
