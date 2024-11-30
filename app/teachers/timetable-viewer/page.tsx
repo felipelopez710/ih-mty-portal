@@ -8,11 +8,17 @@ import React from 'react';
 
 import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import duration from 'dayjs/plugin/duration';
 import Sidebar from '@/app/uiComponents/sidebar';
 import UtilityBar from '@/app/uiComponents/utilityBar';
 import Timetable from './timetable-component';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Select, Space } from 'antd';
+
+dayjs.extend(customParseFormat);
+dayjs.extend(duration);
 
 import TeacherSchedule from '@/components/pdfDocs/teacherSchedule';
 /* const PDFDownloadLink = dynamic(() => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink), { ssr: false });
@@ -28,6 +34,7 @@ export default function TimeableViewer() {
     const [teachersList, setTeachersList]:any = useState([])
     const [frequencyLines, setFrequencyLines]:any = useState(undefined)
     const [activeTeacher, setActiveTeacher]:any = useState(undefined)
+    const [totalWeeklyHours, setTotalWeeklyHours] = useState(0)
 
     async function getTeachers(){
         const { data: teachers, error: teachersError } = await supabase.from('teachers').select('teacher_id,full_name')
@@ -67,7 +74,31 @@ export default function TimeableViewer() {
         if(classes){
             console.log('Teacher timetable: ', classes)
             setFrequencyLoading(false)
-            setFrequencyLines(classes)
+
+            let weeklyHoursCount = 0
+
+            classes.map((clase:any)=>{
+                const frequencyArray = JSON.parse(clase.frequency)
+                const frequencyCount:any = frequencyArray.length
+
+                // Parse hours into dayjs objects
+                const startTime = dayjs(clase.start_time, 'h:mm A')
+                const endTime = dayjs(clase.end_time, 'h:mm A')
+
+                const diff = endTime.diff(startTime)
+                const totalDuration:any = dayjs.duration(diff)
+                let weeklyHours = ((totalDuration * frequencyCount)/3600000)
+                weeklyHoursCount = weeklyHoursCount + weeklyHours
+            })
+
+            setTotalWeeklyHours(weeklyHoursCount)
+
+            const sortedClasses = classes.sort((a, b) => {
+                const timeA:any = dayjs(a.start_time, 'h:mm A');
+                const timeB:any = dayjs(b.start_time, 'h:mm A');
+                return timeA - timeB;
+            })
+            setFrequencyLines(sortedClasses)
         }
         if(classesError){
             console.log('Error:', classesError)
@@ -126,7 +157,7 @@ export default function TimeableViewer() {
 
                             {
                                 (frequencyLines !== undefined && frequencyLines.length > 0) &&
-                                <Timetable frequencyLines={frequencyLines} />
+                                <Timetable frequencyLines={frequencyLines} totalWeeklyHours={totalWeeklyHours} />
                             }
 
                             {
