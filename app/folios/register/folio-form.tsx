@@ -73,6 +73,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
     const [sublevelOptions, setSublevelOptions] = useState([])
     const [materialOptions, setMaterialOptions] = useState([])
+    const [clientId, setClientId] = useState(undefined)
 
     async function onFinish(e:FieldType) {
         setLoading(true)
@@ -190,6 +191,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         .insert({
             group_id: e.group,
             client_name: e.client,
+            client_id: clientId,
             modality: e.modality,
             level_id: e.level,
             sublevel_id: e.sublevel,
@@ -378,17 +380,16 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         /* console.log('Group information: ', selected_group)
         console.log(selected_group.client_name) */
 
-        form.setFieldValue('client', selected_group.client_name)
+        form.setFieldValue('client', selected_group.clients?.client_name)
+        setClientId(selected_group.client_id)
 
-        if(selected_group.city !== null && selected_group.state !== null){
-            form.setFieldValue('client_location', `${selected_group.city}, ${selected_group.state}`)
-        } else if(selected_group.city !== null){
-            form.setFieldValue('client_location', selected_group.city)
-        } else if(selected_group.state !== null){
-            form.setFieldValue('client_location', selected_group.state)
-        } else {
-            form.setFieldValue('client_location', null)
+        const addressParts = [selected_group.clients.address, selected_group.clients.neighborhood, selected_group.clients.city, selected_group.clients.state].filter(Boolean)
+
+        if (addressParts.length > 0){
+            let addresToSet = addressParts.join(", ")
+            form.setFieldValue('client_location', addresToSet)
         }
+
     }
 
     async function handleLevelChange(value : any){
@@ -415,6 +416,8 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
         setMaterialOptions(data)
     }
+
+    const disabledHours = () => [0, 1, 2, 3, 4, 5, 22, 23]; // Horas deshabilitadas
 
     return(
         <Form
@@ -711,7 +714,13 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                                 label="Start time - End time"
                                                 name={[name, 'start_date_end_date']}
                                             >
-                                                <TimePicker.RangePicker needConfirm={false} />
+                                                <TimePicker.RangePicker 
+                                                    needConfirm={false} 
+                                                    disabledTime={()=>({
+                                                        disabledHours
+                                                    })}
+                                                    hideDisabledOptions={true}
+                                                />
                                             </Form.Item>
 
                                             <Form.Item
