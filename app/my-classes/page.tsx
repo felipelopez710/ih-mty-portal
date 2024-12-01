@@ -77,7 +77,28 @@ export default function MyClasses(){
         const { data: teacher, error: teacherError } = await supabase.from('teachers').select().eq('user_id', userContext.user_id)
         console.log('Teacher:', teacher)
         if(teacher){
-            const { data: courses, error: coursesError } = await supabase.from('folio_teacher_view').select().eq('teacher_id', teacher[0].teacher_id)
+            const { data: courses, error: coursesError } = await supabase
+            .from('folio_teacher_relationship')
+            .select(`
+                *, 
+                folios(
+                    folio_id, 
+                    status,
+                    is_historical, 
+                    start_date,
+                    end_date,
+                    modality, 
+                    groups(group_id,group_code),
+                    levels(level_id,level),
+                    sublevels(sublevel_id,sublevel),
+                    materials(material_id,material_description),
+                    level_ref,
+                    material_ref
+                )
+            `)
+            .eq('teacher_id', teacher[0].teacher_id)
+            .eq('status', 'active')
+
             console.log('Courses: ', courses)
             courses !== null && courses.length > 0 ? setListOfFolios(courses) : setListOfFolios(undefined)
         }

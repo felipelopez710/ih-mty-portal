@@ -15,24 +15,24 @@ export default function FoliosGrid({ listOfFolios }:any){
 
                                 <div className='flex gap-2 items-center'>
                                     {
-                                        folio.modality === 'F2F' &&
+                                        folio.folios?.modality === 'F2F' &&
                                         <div className='modality-tag rounded bg-amber-100 w-min flex items-center p-1 gap-1.5'>
                                             <PersonPinCircleOutlinedIcon className='text-rainbow-yellow' />
                                         </div>
                                     }
                                     {
-                                        folio.modality === 'Online' &&
+                                        folio.folios?.modality === 'Online' &&
                                         <div className='modality-tag rounded bg-pink-100 w-min flex items-center p-1 gap-1.5'>
                                             <VideoChatOutlinedIcon className='text-rainbow-pink' />
                                         </div>
                                     }
-                                    <div className='font-semibold'>{`F. ${folio.folio_id} | ${folio.level_description}`}</div>
+                                    <div className='font-semibold'>{!folio.folios?.is_historical ? `F. ${folio.folio_id} | ${folio.folios?.levels?.level}` : `F. ${folio.folio_id} | ${folio.folios?.level_ref}`}</div>
                                 </div>
                                 
                                 <div className='flex flex-col gap-2'>
                                     <div className='flex items-center gap-2'>
                                         <span className='text-slate-400 w-1/3'>Start - end:</span>
-                                        <span className='w-2/3 text-right'>{dayjs(folio.start_date).format('MMM D, YYYY')} - {dayjs(folio.end_date).format('MMM D, YYYY')}</span>
+                                        <span className='w-2/3 text-right'>{dayjs(folio.folios?.start_date).format('MMM D, YYYY')} - {dayjs(folio.folios?.end_date).format('MMM D, YYYY')}</span>
                                     </div>
                                     <div className='flex items-center gap-2'>
                                         <span className='text-slate-400 w-1/3'>Frequency:</span>
