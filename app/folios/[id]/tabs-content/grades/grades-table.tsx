@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridColumnGroupingModel, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 
 const columns: GridColDef[] = [
     { 
@@ -93,6 +93,39 @@ const columns: GridColDef[] = [
     },
 ];
 
+function CustomToolbar() {
+    return (
+        <GridToolbarContainer>
+            <GridToolbarExport />
+        </GridToolbarContainer>
+    );
+}
+
+const columnGroupingModel: GridColumnGroupingModel = [
+    {
+        groupId: 'Module Grades',
+        description: '',
+        headerAlign: 'center',
+        children: [
+            { field: 'module_reading' },
+            { field: 'module_listening' },
+            { field: 'module_writing' },
+            { field: 'module_speaking' },
+        ],
+    },
+    {
+        groupId: 'Level Average',
+        description: '',
+        headerAlign: 'center',
+        children: [
+            { field: 'level_reading' },
+            { field: 'level_listening' },
+            { field: 'level_writing' },
+            { field: 'level_speaking' },
+        ],
+    },
+];
+
 export default function GradesTable({folioGrades}:any){
     return(
         <DataGrid
@@ -108,6 +141,11 @@ export default function GradesTable({folioGrades}:any){
             }}
             pageSizeOptions={[25, 50, 100]}
             disableRowSelectionOnClick
+            columnGroupingModel={columnGroupingModel}
+            columnHeaderHeight={44}
+            slots={{
+                toolbar: CustomToolbar,
+            }}
         />
     )
 }
