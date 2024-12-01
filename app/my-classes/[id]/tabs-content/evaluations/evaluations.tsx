@@ -49,7 +49,7 @@ export default function CourseEvaluations({activeFolioId}:any){
     return(
         <div className="w-full">
             {
-                folioGrades !== undefined && <EvaluationsTable folioGrades={folioGrades} />
+                folioGrades !== undefined && <EvaluationsTable activeFolioId={activeFolioId} folioGrades={folioGrades} setFolioGrades={setFolioGrades} />
             }
         </div>
     )
