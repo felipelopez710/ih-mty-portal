@@ -348,7 +348,7 @@ export default function EditFolioForm({initialValues}:any){
                                 rules={[{ required: true, message: 'Please select the status' }]}
                             >
                                 <Select>
-                                    <Select.Option value="ative">Active</Select.Option>
+                                    <Select.Option value="active">Active</Select.Option>
                                     <Select.Option value="inactive">Inactive</Select.Option>
                                 </Select>
                             </Form.Item>
