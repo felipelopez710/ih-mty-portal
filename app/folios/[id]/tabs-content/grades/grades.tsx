@@ -1,21 +1,56 @@
-import Image from "next/image"
+'use client'
 
-export default function Grades(){
+import { createClient } from "@/utils/supabase/client"
+import { useEffect, useState } from "react";
+import GradesTable from "./grades-table";
+
+export default function Grades({folioInformation}:any){
+    const supabase = createClient()
+
+    const [folioGrades, setFolioGrades]:any = useState(undefined)
+
+    async function getGrades () {
+        const { data: grades, error: gradesError } = await supabase.
+        from('grades')
+        .select('*, students(student_id, full_name)')
+        .eq('folio_id', folioInformation.folio_id)
+
+        if(grades){
+            let formattedGrades:any = []
+            grades.map((grade:any)=>{
+                formattedGrades.push({
+                    id: grade.student_id,
+                    student: grade.students?.full_name,
+                    module_reading: grade.module_reading,
+                    module_listening: grade.module_listening,
+                    module_writing: grade.module_writing,
+                    module_speaking: grade.module_speaking,
+                    final_exam: grade.final_exam,
+                    average: grade.average,
+                    strength: grade.strength,
+                    area_of_opportunity: grade.area_of_opportunity,
+                    level_reading: grade.level_reading,
+                    level_listening: grade.level_listening,
+                    level_writing: grade.level_writing,
+                    level_speaking: grade.level_speaking,
+                })
+            })
+            console.log('Grades for this folio: ', formattedGrades)
+            setFolioGrades(formattedGrades)
+        }
+    }
+
+    useEffect(() => {
+        if(folioGrades == undefined){
+            getGrades()
+        }
+    }, [])
+    
     return(
-        <div className="w-full p-20 flex items-center justify-center">
-            <div className="w-full max-w-96 flex flex-col items-center justify-center gap-8">
-                <div className="logo-container">
-                    <Image
-                        src="/wip.png"
-                        width={180}
-                        height={180}
-                        alt="logo-ih"
-                    />
-                </div>
-                <div className="w-full text-center font-medium text-base">
-                    This page is under construction
-                </div>
-            </div>
+        <div className="w-full py-5">
+            {
+                folioGrades !== undefined && <GradesTable folioGrades={folioGrades} />
+            }
         </div>
     )
 }

@@ -292,28 +292,6 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 console.log('Error with classes: ', classesError)
             }
 
-            // Create the folio evaluations and link them to the folio
-            let evaluations = ['Mid-term exam', 'Final exam', 'Average']
-            let evaluationsToCreate:any = []
-            evaluations.map((evaluation:any)=>{
-                evaluationsToCreate.push({
-                    evaluation_name: evaluation,
-                    folio_id: folioId,
-                })
-            })
-
-            const { data: created_evaluations, error: evaluations_error } = await supabase
-            .from('evaluations')
-            .insert(evaluationsToCreate)
-            .select()
-
-            if (created_evaluations){
-                console.log('CREATED EVALUATIONS: ', created_evaluations)
-            }
-            if (evaluations_error){
-                console.log('Error with evaluations: ', evaluations_error)
-            }
-
             // Create the folio - students relationship
             const { data: students, error: studentsError } = await supabase.from('student_per_group').select().eq('group_id', e.group)
             if (students){
@@ -337,8 +315,22 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                     console.log('Error with enroling students: ', enrolError)
                 }
 
-                // Create empty grades for each evaluation and student
+                // Create a grades row for each student
                 let gradesToCreate:any = []
+                enroledStudents?.map((student)=>{
+                    gradesToCreate.push({
+                        folio_id: folioId,
+                        student_id: student.student_id
+                    })
+                })
+
+                const { data: createdGrades, error: gradesError } = await supabase
+                .from('grades')
+                .insert(gradesToCreate)
+                .select()
+
+                // Create empty grades for each evaluation and student
+                /* let gradesToCreate:any = []
                 enroledStudents?.map((student)=>{
                     created_evaluations?.map((evaluation)=>{
                         gradesToCreate.push({
@@ -358,7 +350,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 }
                 if (gradesError){
                     console.log('Error with grades: ', gradesError)
-                }
+                } */
             }
 
             setTimeout(() => {
