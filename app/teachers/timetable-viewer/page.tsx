@@ -69,8 +69,15 @@ export default function TimeableViewer() {
         console.log(`Selected: ${value}`);
 
         setActiveTeacher(value)
+
+        const currentDate = new Date().toISOString()
         
-        const { data: classes, error: classesError } = await supabase.from('frequency_lines').select('*, folios(start_date, end_date, client_name, groups(group_code), levels(level))').eq('teacher_id', value) 
+        const { data: classes, error: classesError } = await supabase
+        .from('frequency_lines')
+        .select('*, folios(start_date, end_date, client_name, groups(group_code), levels(level))')
+        .eq('teacher_id', value) 
+        .gte('end_date', currentDate)
+
         if(classes){
             console.log('Teacher timetable: ', classes)
             setFrequencyLoading(false)

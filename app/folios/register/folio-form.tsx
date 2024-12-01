@@ -251,6 +251,8 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                     teacher_id: line.teacher,
                     start_time: dayjs(line.start_date_end_date[0]).format('h:mm A'),
                     end_time: dayjs(line.start_date_end_date[1]).format('h:mm A'),
+                    start_date: e.start_date,
+                    end_date: lastClass.classDate,
                 })
             })
 
