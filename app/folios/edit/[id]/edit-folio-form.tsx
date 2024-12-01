@@ -41,6 +41,7 @@ const dayOptions = [
 ]
 
 type FieldType = {
+    status?: string;
     group?: string;
     client?: string;
     client_location?: string;
@@ -83,12 +84,21 @@ export default function EditFolioForm({initialValues}:any){
             contracted_hours: e.contracted_hours,
             amount_to_invoice: e.amount_to_invoice,
             coordinator_id: e.coordinator,
+            status: e.status,
             comments: e.general_comments,
             academic_comments: e.academic_comments,
             material_covered: e.material_covered,
         })
         .eq('folio_id', initialValues.folio_id)
         .select()
+
+        if(updatedFolio){
+            const { data: updatedFrequencyLines, error: frequencyError } = await supabase
+            .from('folio_teacher_relationship')
+            .update({status: e.status})
+            .eq('folio_id', initialValues.folio_id)
+            .select()
+        }
 
         setTimeout(() => {
             router.push(`/folios/${initialValues.folio_id}`)
@@ -124,6 +134,7 @@ export default function EditFolioForm({initialValues}:any){
         form.setFieldValue('contracted_hours', initialValues.contracted_hours)
         form.setFieldValue('amount_to_invoice', initialValues.amount_to_invoice)
         form.setFieldValue('coordinator', initialValues.coordinator_id?.toString())
+        form.setFieldValue('status', initialValues.status)
         form.setFieldValue('general_comments', initialValues.comments)
         form.setFieldValue('academic_comments', initialValues.academic_comments)
         form.setFieldValue('material_covered', initialValues.material_covered)
@@ -151,7 +162,7 @@ export default function EditFolioForm({initialValues}:any){
                     <Link href={"/folios"}>
                         <ArrowBackRoundedIcon className='mr-2 text-black hover:text-black'/>
                     </Link>
-                    Edit Folio 
+                    Edit Folio {initialValues?.folio_id}
                 </div> 
                 <Button 
                     type="primary" 
@@ -325,117 +336,60 @@ export default function EditFolioForm({initialValues}:any){
                     </div>
 
                     {/* Comments Section */}
-
-                    <div className='comments-section w-1/3 bg-white rounded-xl p-5 pb-0 h-min flex flex-col gap-5 border border-solid border-slate-300'>
-                        <div className='text-base font-semibold'>Comments</div>
-                        <div className='fields flex flex-col'>
-
-                            {/* General comments */}
-                            <Form.Item<FieldType>
-                                className="flex-1"
-                                label="General comments"
-                                name="general_comments"
+                    
+                    <div className="left-section w-1/3 h-min flex flex-col gap-5">
+                        
+                        <div className="status bg-white rounded-xl p-5 pb-0 flex flex-col gap-5 border border-solid border-slate-300">
+                            <div className='text-base font-semibold'>Folio status</div>
+                            <Form.Item<FieldType> 
+                                className="flex-1" 
+                                label="Status"
+                                name="status"
+                                rules={[{ required: true, message: 'Please select the status' }]}
                             >
-                                <TextArea rows={2} />
+                                <Select>
+                                    <Select.Option value="ative">Active</Select.Option>
+                                    <Select.Option value="inactive">Inactive</Select.Option>
+                                </Select>
                             </Form.Item>
+                        </div>
 
-                            {/* Academic comments */}
-                            <Form.Item<FieldType>
-                                className="flex-1"
-                                label="Academic"
-                                name="academic_comments"
-                            >
-                                <TextArea rows={2} />
-                            </Form.Item>
+                        <div className='comments-section bg-white rounded-xl p-5 pb-0 flex flex-col gap-5 border border-solid border-slate-300'>
+                            <div className='text-base font-semibold'>Comments</div>
+                            <div className='fields flex flex-col'>
 
-                            {/* Material covered */}
-                            <Form.Item<FieldType>
-                                className="flex-1"
-                                label="Material covered"
-                                name="material_covered"
-                            >
-                                <TextArea rows={2} />
-                            </Form.Item>
+                                {/* General comments */}
+                                <Form.Item<FieldType>
+                                    className="flex-1"
+                                    label="General comments"
+                                    name="general_comments"
+                                >
+                                    <TextArea rows={2} />
+                                </Form.Item>
 
+                                {/* Academic comments */}
+                                <Form.Item<FieldType>
+                                    className="flex-1"
+                                    label="Academic"
+                                    name="academic_comments"
+                                >
+                                    <TextArea rows={2} />
+                                </Form.Item>
+
+                                {/* Material covered */}
+                                <Form.Item<FieldType>
+                                    className="flex-1"
+                                    label="Material covered"
+                                    name="material_covered"
+                                >
+                                    <TextArea rows={2} />
+                                </Form.Item>
+
+                            </div>
                         </div>
                     </div>
 
                 </div>
-
-                {/* Frequency Section */}
-                {/* <div className="frequency w-full bg-white rounded-xl p-5 pb-0 h-min flex flex-col gap-5 border border-solid border-slate-300">
-
-                    <div className="flex flex-col gap-2">
-                        <div className='text-base font-semibold'>Teachers and frequency</div>
-                        <div className=''>Configure the schedules and teachers for this folio</div>
-                    </div>
-                    <div className='fields flex flex-col'>
-
-                        <div className="frecuency-lines w-full">
-
-                            <Form.List name="frecuency_lines">
-                                {(fields, { add, remove }) => (
-                                    <span key={'list'}>
-                                    {fields.map(({ key, name, ...restField }) => (
-                                        <div className="flex items-center gap-2" key={key}>
-                                            <div className="w-5 text-center">{key+1}</div>
-
-                                            <Form.Item
-                                                {...restField}
-                                                label="Frecuency"
-                                                name={[name, 'frequency']}
-                                                className="flex-1"
-                                            >
-                                                <Select
-                                                    mode="multiple"
-                                                    allowClear
-                                                    style={{ width: '100%' }}
-                                                    placeholder="Please select"
-                                                    //onChange={handleChange}
-                                                    options={dayOptions}
-                                                />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                {...restField}
-                                                label="Start time - End time"
-                                                name={[name, 'start_date_end_date']}
-                                            >
-                                                <TimePicker.RangePicker needConfirm={false} />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                label="Teacher"
-                                                name={[name, 'teacher']}
-                                                rules={[{ required: true, message: 'Choose a teacher' }]}
-                                                className="flex-1"
-                                            >
-                                                <Select>
-                                                    {teachers.map((teacher:any)=>{
-                                                        return(
-                                                            <Select.Option value={teacher.teacher_id} key={teacher.teacher_id}>{teacher.full_name}</Select.Option>
-                                                        )
-                                                    })}
-                                                </Select>
-                                            </Form.Item>
-
-                                            <MinusCircleOutlined onClick={() => remove(name)} />
-                                        </div>
-                                    ))}
-                                    <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                            Add a line
-                                        </Button>
-                                    </Form.Item>
-                                    </span>
-                                )}
-                            </Form.List>
-
-                        </div>
-
-                    </div>
-
-                </div> */}
 
             </div>
 

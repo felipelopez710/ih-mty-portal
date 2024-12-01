@@ -19,6 +19,26 @@ export default function FolioInfo({ folioInformation } : any){
 
             <div className='information-lines w-full flex flex-col gap-2'>
 
+                {/* Folio status */}
+                {
+                    folioInformation.status !== null &&
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Status</div>
+                        <div className='w-2/3'>
+                            {
+                                folioInformation.status == 'active' ?
+                                <div>
+                                    <span className="bg-green-100 rounded-md px-2 py-1 text-green-600 font-medium">Active</span>
+                                </div>
+                                :
+                                <div>
+                                    <span className="bg-red-200 rounded-md px-2 py-1 text-red-700 font-medium capitalize">{folioInformation.status}</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
                 {/* Group code */}
                 {
                     folioInformation.group_code !== null ?
