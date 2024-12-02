@@ -248,7 +248,7 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
                 onClose={onClose}
             >
                 {
-                    activeClass !== undefined && <EditClassForm activeClass={activeClass} onClose={onClose} setUpdatedClass={setUpdatedClass} />
+                    activeClass !== undefined && <EditClassForm activeFolio={activeFolio} activeClass={activeClass} onClose={onClose} setUpdatedClass={setUpdatedClass} />
                 }
             </Drawer>
             <Modal

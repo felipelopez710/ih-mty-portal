@@ -138,6 +138,17 @@ export default function FolioInfo({ folioInformation } : any){
                     ''
                 }
 
+                {/* Sessions */}
+                {
+                    folioInformation.sessions !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Programmed sessions</div>
+                        <div className='w-2/3'>{folioInformation.sessions}</div>
+                    </div>
+                    :
+                    ''
+                }
+
                 {/* Start date */}
                 {
                     folioInformation.start_date !== null ?
