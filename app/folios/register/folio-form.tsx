@@ -73,6 +73,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
     const [sublevelOptions, setSublevelOptions] = useState([])
     const [materialOptions, setMaterialOptions] = useState([])
+    const [clientId, setClientId] = useState(undefined)
 
     async function onFinish(e:FieldType) {
         setLoading(true)
@@ -190,6 +191,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         .insert({
             group_id: e.group,
             client_name: e.client,
+            client_id: clientId,
             modality: e.modality,
             level_id: e.level,
             sublevel_id: e.sublevel,
@@ -206,6 +208,7 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
             feedback_taken: false,
             status: "Active",
             client_location: e.client_location,
+            sessions: listOfClasses.length,
             holidays: absenceDays.length
         })
         .select()
@@ -249,6 +252,8 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                     teacher_id: line.teacher,
                     start_time: dayjs(line.start_date_end_date[0]).format('h:mm A'),
                     end_time: dayjs(line.start_date_end_date[1]).format('h:mm A'),
+                    start_date: e.start_date,
+                    end_date: lastClass.classDate,
                 })
             })
 
@@ -290,28 +295,6 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 console.log('Error with classes: ', classesError)
             }
 
-            // Create the folio evaluations and link them to the folio
-            let evaluations = ['Mid-term exam', 'Final exam', 'Average']
-            let evaluationsToCreate:any = []
-            evaluations.map((evaluation:any)=>{
-                evaluationsToCreate.push({
-                    evaluation_name: evaluation,
-                    folio_id: folioId,
-                })
-            })
-
-            const { data: created_evaluations, error: evaluations_error } = await supabase
-            .from('evaluations')
-            .insert(evaluationsToCreate)
-            .select()
-
-            if (created_evaluations){
-                console.log('CREATED EVALUATIONS: ', created_evaluations)
-            }
-            if (evaluations_error){
-                console.log('Error with evaluations: ', evaluations_error)
-            }
-
             // Create the folio - students relationship
             const { data: students, error: studentsError } = await supabase.from('student_per_group').select().eq('group_id', e.group)
             if (students){
@@ -335,14 +318,12 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                     console.log('Error with enroling students: ', enrolError)
                 }
 
-                // Create empty grades for each evaluation and student
+                // Create a grades row for each student
                 let gradesToCreate:any = []
                 enroledStudents?.map((student)=>{
-                    created_evaluations?.map((evaluation)=>{
-                        gradesToCreate.push({
-                            student_id: student.student_id,
-                            evaluation_id: evaluation.evaluation_id,
-                        })
+                    gradesToCreate.push({
+                        folio_id: folioId,
+                        student_id: student.student_id
                     })
                 })
 
@@ -351,12 +332,6 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                 .insert(gradesToCreate)
                 .select()
 
-                if (createdGrades){
-                    console.log('CREATED GRADES', createdGrades)
-                }
-                if (gradesError){
-                    console.log('Error with grades: ', gradesError)
-                }
             }
 
             setTimeout(() => {
@@ -378,17 +353,16 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
         /* console.log('Group information: ', selected_group)
         console.log(selected_group.client_name) */
 
-        form.setFieldValue('client', selected_group.client_name)
+        form.setFieldValue('client', selected_group.clients?.client_name)
+        setClientId(selected_group.client_id)
 
-        if(selected_group.city !== null && selected_group.state !== null){
-            form.setFieldValue('client_location', `${selected_group.city}, ${selected_group.state}`)
-        } else if(selected_group.city !== null){
-            form.setFieldValue('client_location', selected_group.city)
-        } else if(selected_group.state !== null){
-            form.setFieldValue('client_location', selected_group.state)
-        } else {
-            form.setFieldValue('client_location', null)
+        const addressParts = [selected_group.clients.address, selected_group.clients.neighborhood, selected_group.clients.city, selected_group.clients.state].filter(Boolean)
+
+        if (addressParts.length > 0){
+            let addresToSet = addressParts.join(", ")
+            form.setFieldValue('client_location', addresToSet)
         }
+
     }
 
     async function handleLevelChange(value : any){
@@ -415,6 +389,8 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
 
         setMaterialOptions(data)
     }
+
+    const disabledHours = () => [0, 1, 2, 3, 4, 5, 22, 23]; // Horas deshabilitadas
 
     return(
         <Form
@@ -711,7 +687,13 @@ export default function RegistrationForm({ groups, levels, coordinators, teacher
                                                 label="Start time - End time"
                                                 name={[name, 'start_date_end_date']}
                                             >
-                                                <TimePicker.RangePicker needConfirm={false} />
+                                                <TimePicker.RangePicker 
+                                                    needConfirm={false} 
+                                                    disabledTime={()=>({
+                                                        disabledHours
+                                                    })}
+                                                    hideDisabledOptions={true}
+                                                />
                                             </Form.Item>
 
                                             <Form.Item

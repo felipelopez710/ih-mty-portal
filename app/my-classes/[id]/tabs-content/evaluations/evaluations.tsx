@@ -1,10 +1,10 @@
 'use client'
 
 import { createClient } from "@/utils/supabase/client"
-import { useEffect, useState } from "react";
-import GradesTable from "./grades-table";
+import { useState, useEffect } from "react"
+import EvaluationsTable from "./evaluations-table"
 
-export default function Grades({folioInformation}:any){
+export default function CourseEvaluations({activeFolioId}:any){
     const supabase = createClient()
 
     const [folioGrades, setFolioGrades]:any = useState(undefined)
@@ -13,7 +13,7 @@ export default function Grades({folioInformation}:any){
         const { data: grades, error: gradesError } = await supabase.
         from('grades')
         .select('*, students(student_id, full_name)')
-        .eq('folio_id', folioInformation.folio_id)
+        .eq('folio_id', activeFolioId)
 
         if(grades){
             let formattedGrades:any = []
@@ -45,11 +45,11 @@ export default function Grades({folioInformation}:any){
             getGrades()
         }
     }, [])
-    
+
     return(
-        <div className="w-full py-5">
+        <div className="w-full">
             {
-                folioGrades !== undefined && <GradesTable folioGrades={folioGrades} />
+                folioGrades !== undefined && <EvaluationsTable activeFolioId={activeFolioId} folioGrades={folioGrades} setFolioGrades={setFolioGrades} />
             }
         </div>
     )

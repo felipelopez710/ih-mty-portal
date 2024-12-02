@@ -4,9 +4,12 @@ import { createClient } from "@/utils/supabase/client"
 import { useState, useEffect } from "react"
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import duration from 'dayjs/plugin/duration';
+
 import { Button, Form, Input, Select, DatePicker, Spin, TimePicker } from "antd";
 
 dayjs.extend(customParseFormat);
+dayjs.extend(duration);
 
 type FieldType = {
     material_description?: string;
@@ -15,7 +18,7 @@ type FieldType = {
     sublevel_id?: string;
 };
 
-export default function EditClassForm({ activeClass, onClose, setUpdatedClass }:any){
+export default function EditClassForm({ activeFolio, activeClass, onClose, setUpdatedClass }:any){
     const supabase = createClient()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
@@ -26,10 +29,11 @@ export default function EditClassForm({ activeClass, onClose, setUpdatedClass }:
         console.log('Sent data: ', e)
         setLoading(true)
         
-        const { data: updatedClass, error: classError } = await supabase.from('classes').update({
+        const { data: updatedClass, error: classError }:any = await supabase.from('classes').update({
             date: e.date,
             start_time: dayjs(e.start_time).format('h:mm A'),
             end_time: dayjs(e.end_time).format('h:mm A'),
+            duration: dayjs(e.end_time).diff(dayjs(e.start_time), 'hour', true),
             teacher_id: e.teacher
         })
         .eq('class_id', activeClass.class_id)
@@ -37,6 +41,23 @@ export default function EditClassForm({ activeClass, onClose, setUpdatedClass }:
 
         if(updatedClass){
             console.log('Class updated: ', updatedClass)
+            console.log('Original duiration: ', activeClass.duration)
+            console.log('Updated duration: ', updatedClass[0].duration)
+            if(activeClass.duration !== updatedClass[0].duration){
+                let newDuration:any
+
+                if(activeClass.duration > updatedClass[0].duration){ // si la duración disminuyó, la diferencia se resta a scheduled_hours
+                    newDuration = activeFolio.scheduled_hours - (activeClass.duration - updatedClass[0].duration)
+                }else{
+                    newDuration = activeFolio.scheduled_hours + (updatedClass[0].duration - activeClass.duration)
+                }
+                console.log('Duration has change')
+                const { data: updatedFolio, error: folioError } = await supabase
+                .from('folios')
+                .update({scheduled_hours: newDuration})
+                .eq('folio_id', activeFolio.folio_id)
+                .select()
+            }
         }
         if(classError){
             console.log('Error updating class: ', classError)
@@ -47,7 +68,7 @@ export default function EditClassForm({ activeClass, onClose, setUpdatedClass }:
             onClose()
             setUpdatedClass(updatedClass)
             setLoading(false)
-        }, 1000);
+        }, 100);
     }
 
     async function getDefaultValues(){

@@ -34,6 +34,8 @@ export default function Attendance({attendance, listOfClasses}:any){
             console.log('Sorted classes:', sortedDates)
 
             sortedDates?.map((clase:any)=>{
+                let header_name = dayjs(clase.date).format('M/D/YYYY')
+
                 columnDefinition.push({
                     field: clase.date,
                     headerName: dayjs(clase.date).format('M/D/YYYY'),
@@ -41,15 +43,18 @@ export default function Attendance({attendance, listOfClasses}:any){
                     headerAlign: 'center',
                     align: 'center',
                     renderCell: (params:any) => (
-                        <span>
-                            {
-                                params.row.clase?.date === 'present' ?
-                                <div>Present</div>
-                                :
-                                <div>-</div>
-                            }
+                        <span className="flex h-full justify-center items-center">
+                            <div>
+                                {params.value === 'present' &&  <span className="bg-green-100 px-2 py-1 rounded text-xs font-semibold text-green-600">Present</span>}
+                                {params.value === 'absent' &&  <span className="bg-red-100 px-2 py-1 rounded text-xs font-semibold text-red-600">Absent</span>}
+                                {params.value === 'tardy' &&  <span className="bg-yellow-100 px-2 py-1 rounded text-xs font-semibold text-yellow-600">Tardy</span>}
+                                {params.value === 'ct' &&  <span className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold text-gray-600">CT</span>}
+                                {params.value === 'cs' &&  <span className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold text-gray-600">CS</span>}
+                                {params.value === 'cih' &&  <span className="bg-gray-100 px-2 py-1 rounded text-xs font-semibold text-gray-600">CIH</span>}
+                            </div>
                         </span>
                     )
+                    /* renderCell: (params:any) => <AttendanceCell params={params} field={header_name} /> */
                 })
             })
         }
@@ -85,7 +90,11 @@ export default function Attendance({attendance, listOfClasses}:any){
     return(
         <div className="w-full pt-5 flex items-center justify-center">
             {
-                (tableColumns !== undefined && tableContent !== undefined) &&
+                tableContent?.length <= 0 &&
+                <div className="p-10">No attendance records for this group</div>
+            }
+            {
+                (tableColumns !== undefined && tableContent !== undefined && tableContent.length > 0) &&
                 <DataGrid
                     rows={tableContent}
                     columns={tableColumns}

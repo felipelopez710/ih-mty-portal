@@ -12,6 +12,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { Button, Tabs, TabsProps } from "antd";
 import CourseCalendar from './tabs-content/course-calendar';
 import CourseAttendance from './tabs-content/attendance/attendance';
+import CourseEvaluations from './tabs-content/evaluations/evaluations';
 import dayjs from 'dayjs'
 
 const items: TabsProps['items'] = [
@@ -170,7 +171,7 @@ export default function CourseDetail(){
                             /> 
                         }
 
-                        {activeTab == '3' && <div>Course Evaluations</div> }
+                        {activeTab == '3' && <CourseEvaluations activeFolioId={activeFolioId} /> }
                         
                         {activeTab == '4' && <div>Course Feedback</div> }
 

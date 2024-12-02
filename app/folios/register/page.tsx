@@ -7,7 +7,7 @@ import RegistrationForm from "./folio-form"
 export default async function RegisterFolio(){
     const supabase = createClient()
 
-    const { data: groups } = await supabase.from('group_options_view').select()
+    const { data: groups } = await supabase.from('groups').select('*, clients(client_id, client_name, address, neighborhood, city, state)')
 
     const { data: levels } = await supabase.from('levels').select()
 

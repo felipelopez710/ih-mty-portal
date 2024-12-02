@@ -19,6 +19,26 @@ export default function FolioInfo({ folioInformation } : any){
 
             <div className='information-lines w-full flex flex-col gap-2'>
 
+                {/* Folio status */}
+                {
+                    folioInformation.status !== null &&
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Status</div>
+                        <div className='w-2/3'>
+                            {
+                                folioInformation.status == 'active' ?
+                                <div>
+                                    <span className="bg-green-100 rounded-md px-2 py-1 text-green-600 font-medium">Active</span>
+                                </div>
+                                :
+                                <div>
+                                    <span className="bg-red-200 rounded-md px-2 py-1 text-red-700 font-medium capitalize">{folioInformation.status}</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
                 {/* Group code */}
                 {
                     folioInformation.group_code !== null ?
@@ -68,7 +88,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.level_description !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Level</div>
-                        <div className='w-2/3'>{folioInformation?.levels.level}</div>
+                        <div className='w-2/3'>{folioInformation?.levels?.level ?? folioInformation.level_ref }</div>
                     </div>
                     :
                     ''
@@ -79,7 +99,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.level_description !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Sublevel</div>
-                        <div className='w-2/3'>{folioInformation?.sublevels.sublevel}</div>
+                        <div className='w-2/3'>{folioInformation?.sublevels?.sublevel ?? "" }</div>
                     </div>
                     :
                     ''
@@ -90,7 +110,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.material_description !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Material</div>
-                        <div className='w-2/3'>{folioInformation?.materials.material_description}</div>
+                        <div className='w-2/3'>{folioInformation?.materials?.material_description ?? folioInformation.material_ref }</div>
                     </div>
                     :
                     ''
@@ -113,6 +133,17 @@ export default function FolioInfo({ folioInformation } : any){
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Scheduled hours</div>
                         <div className='w-2/3'>{folioInformation.scheduled_hours}</div>
+                    </div>
+                    :
+                    ''
+                }
+
+                {/* Sessions */}
+                {
+                    folioInformation.sessions !== null ?
+                    <div className='information-line w-full flex gap-2'>
+                        <div className='w-1/3 text-slate-400'>Programmed sessions</div>
+                        <div className='w-2/3'>{folioInformation.sessions}</div>
                     </div>
                     :
                     ''
@@ -156,7 +187,7 @@ export default function FolioInfo({ folioInformation } : any){
                     folioInformation.coordinator !== null ?
                     <div className='information-line w-full flex gap-2'>
                         <div className='w-1/3 text-slate-400'>Coordinator</div>
-                        <div className='w-2/3'>{folioInformation?.coordinators.full_name}</div>
+                        <div className='w-2/3'>{folioInformation?.coordinators?.full_name}</div>
                     </div>
                     :
                     ''

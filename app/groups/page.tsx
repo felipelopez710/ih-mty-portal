@@ -95,7 +95,7 @@ export default async function Groups() {
                         </Link>
                     </div>
 
-                    <GroupsTable groups={groups?.reverse()} />
+                    <GroupsTable groups={formatedGroupList?.reverse()} />
 
                 </div>
                 

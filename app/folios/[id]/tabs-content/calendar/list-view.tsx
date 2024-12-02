@@ -4,13 +4,14 @@ import { createClient } from '@/utils/supabase/client';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Drawer, Modal, Button } from 'antd';
+import { Drawer, Modal, Button, Form, Select } from 'antd';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import EditClassForm from './actions/edit-class';
 
 export default function ListView({ activeFolio, classesList, listOfClasses }:any){
     const supabase = createClient()
+    const [form] = Form.useForm()
     
     const [loading, setLoading] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false) // Triggers the 'Edit class' modal
@@ -31,11 +32,15 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
     }
 
     // Controls the final confirmation to cancel the class
-    const cancelClass = async () => {
-        setLoading(true)
+    async function cancelClass(e:any) {
+        // setLoading(true)
 
+        console.log('Class to update: ', activeClass.class_id)
+        console.log('Status to put: ', e.reason)
+
+        // Set status of the class to the cancelation reason
         const { data: cancelledClass, error: classError } = await supabase.from('classes').update({
-            class_status: 'cancelled'
+            class_status: e.reason
         })
         .eq('class_id', activeClass.class_id)
         .select()
@@ -44,12 +49,38 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
             console.log('Updated class: ', cancelledClass)
         }
 
+        // Set attendance records for each studet from the folio and set it to the cancelation reason
+        const { data: students, error: studentsError } = await supabase
+        .from('student_per_folio')
+        .select('folio_id, student_id')
+        .eq('folio_id', activeFolio.folio_id)
+
+        let attendanceRecords:any = []
+
+        if(students){
+            students.map((student:any)=>{
+                attendanceRecords.push({
+                    attendance: e.reason,
+                    class_id: activeClass.class_id,
+                    student_id: student.student_id,
+                    folio_id: activeFolio.folio_id,
+                    teacher_id: null
+                })
+            })
+        }
+
+        const { data: createdAttendance, error: attendanceError } = await supabase
+        .from('attendance')
+        .insert(attendanceRecords)
+        .select()
+        
         setTimeout(()=>{
             setUpdatedClass(cancelledClass)
             setDeleteModal(false)
             setActiveClass(undefined)
             setLoading(false)
-        }, 1000)
+        }, 100) 
+       
     }
 
 
@@ -120,10 +151,13 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
             <div className='flex items-center h-full'>
                 <div>
                     <span className={`
-                        table-tag px-3 py-1.5 text-xs rounded-full capitalize font-medium border 
-                        ${class_status == 'programmed' && 'border-ih-blue bg-sky-100 text-ih-blue'}
-                        ${class_status == 'canceled' && 'border-red-600 bg-red-50 text-red-600'}
-                        ${class_status == 'given' && 'border-green-600 bg-green-50 text-green-600'}
+                        table-tag px-3 py-1.5 text-xs rounded-full font-medium border 
+                        ${class_status == 'programmed' && 'capitalize border-ih-blue bg-sky-100 text-ih-blue'}
+                        ${class_status == 'canceled' && 'capitalize border-red-600 bg-red-50 text-red-600'}
+                        ${class_status == 'ct' && 'border-red-600 bg-red-50 text-red-600 uppercase'}
+                        ${class_status == 'cs' && 'border-red-600 bg-red-50 text-red-600 uppercase'}
+                        ${class_status == 'cih' && 'border-red-600 bg-red-50 text-red-600 uppercase'}
+                        ${class_status == 'given' && 'capitalize border-green-600 bg-green-50 text-green-600'}
                     `}>
                         {class_status}
                     </span>
@@ -149,14 +183,20 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
 
         return(
             <div>
-                <div className='flex gap-2 items-center h-full' >
-                    <div className='text-ih-blue' onClick={handleClick}>
-                        <EditOutlinedIcon/>
+                {
+                    params.row.class_status == 'programmed' ?
+                    <div className='flex gap-2 items-center h-full' >
+                        <div className='text-ih-blue' onClick={handleClick}>
+                            <EditOutlinedIcon/>
+                        </div>
+                        <div className='text-red-600' onClick={handleCancel}>
+                            <RemoveCircleOutlineOutlinedIcon/>
+                        </div>
                     </div>
-                    <div className='text-red-600' onClick={handleCancel}>
-                        <RemoveCircleOutlineOutlinedIcon/>
+                    :
+                    <div className='flex gap-2 items-center h-full' >
                     </div>
-                </div>
+                }
             </div>
         )
     }
@@ -208,25 +248,56 @@ export default function ListView({ activeFolio, classesList, listOfClasses }:any
                 onClose={onClose}
             >
                 {
-                    activeClass !== undefined && <EditClassForm activeClass={activeClass} onClose={onClose} setUpdatedClass={setUpdatedClass} />
+                    activeClass !== undefined && <EditClassForm activeFolio={activeFolio} activeClass={activeClass} onClose={onClose} setUpdatedClass={setUpdatedClass} />
                 }
             </Drawer>
             <Modal
-                title="Delete material"
+                title="Cancel class"
                 centered
                 open={deleteModal}
                 onOk={cancelClass}
                 onCancel={onCancelDetele}
                 footer={[
-                    <Button key="cancel" onClick={onCancelDetele}>
-                        Cancel
-                    </Button>,
-                    <Button key="delete" danger disabled={loading} onClick={cancelClass}>
-                        Yes, cancel class
-                    </Button>
+                    <Form
+                        form={form} 
+                        className="w-full"
+                        layout='vertical'
+                        size='large'
+                        onFinish={cancelClass}
+                    >
+                        <div className='footer-container flex flex-col'>
+                            <div className='form-container w-full text-left'>
+                                <Form.Item
+                                    className="flex-1" 
+                                    label="Reason for cancellation"
+                                    name="reason"
+                                    rules={[{ required: true, message: 'Please select a reason' }]}
+                                >
+                                    <Select>
+                                        <Select.Option value="ct">Cancelled by Teacher</Select.Option>
+                                        <Select.Option value="cs">Cancelled by students</Select.Option>
+                                        <Select.Option value="cih">Cancelled by International House</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <div className='buttons container flex gap-2 justify-end'>
+                                <Button key="cancel" onClick={onCancelDetele}>
+                                    Cancel
+                                </Button>
+                                <Button key="delete" danger disabled={loading} htmlType="submit">
+                                    Cancel class
+                                </Button>
+                            </div>
+                        </div>
+                    </Form>
                 ]}
             >
-                <p>Are you sure you want to cancel this class: {dayjs(activeClass?.date).format("MMMM D, YYYY")} ({activeClass?.start_time} - {activeClass?.start_time}) </p>
+                <div className='flex flex-col gap-2 py-2'>
+                    <p>Are you sure you want to cancel this class:</p>
+                    <div className='px-4 py-2 rounded-lg bg-blue-50'>
+                        {dayjs(activeClass?.date).format("MMMM D, YYYY")} ({activeClass?.start_time} - {activeClass?.start_time})
+                    </div>
+                </div>
             </Modal>
         </div>
     )

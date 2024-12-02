@@ -144,7 +144,7 @@ export default function FolioDetail(){
 
                                 {activeTab == '3' ? <Attendance attendance={attendance} listOfClasses={listOfClasses} /> : ''}
                                 
-                                {activeTab == '4' ? <Grades/> : ''}
+                                {activeTab == '4' ? <Grades folioInformation={activeFolio} /> : ''}
 
                                 {activeTab == '5' ? <Payroll/> : ''}
 

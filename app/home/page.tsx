@@ -101,31 +101,37 @@ const foliosProgress = [
 
 const todaysClasses = [
     {
+        id: 1,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
     },
     {
+        id: 2,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
     },
     {
+        id: 3,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
     },
     {
+        id: 4,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
     },
     {
+        id: 5,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
     },
     {
+        id: 6,
         title: 'F. 16922 - 102 PRE-ELEMENTARY',
         teacher: 'Tom Morrisey',
         date: 'March 18 | 11:00 am - 1:00 pm'
@@ -233,7 +239,7 @@ export default function Home() {
                                             {
                                                 todaysClasses.map((clase) => {
                                                     return(
-                                                        <div className="class-card-container border border-gray-300 rounded-md">
+                                                        <div key={clase.id} className="class-card-container border border-gray-300 rounded-md">
                                                             <div className="class-card p-4 flex flex-col gap-1 rounded-md bg-white border-l-8 border-ih-blue">
                                                                 <div className="font-semibold">F. 16922 - 102 PRE-ELEMENTARY</div>
                                                                 <div className="flex flex-col">
